@@ -20,4 +20,7 @@ public final class Constants {
     public static final double driveNorm = 0.6;
     public static final double driveFast = 0.8;
 
+    public static final boolean DEBUG = true;
+
+    
 }
