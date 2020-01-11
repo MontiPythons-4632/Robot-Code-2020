@@ -7,27 +7,34 @@
 
 package frc.robot.commands;
 
+import frc.robot.subsystems.Drive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class DriveForwardXFeet extends CommandBase {
   /**
    * Creates a new DriveForwardXFeet.
    */
-double distanceToTravelInFeet;
+  private final Drive m_drive;
 
-  public DriveForwardXFeet(double feet) {
+  double distanceToTravelInFeet;
+
+  public DriveForwardXFeet(Drive subsystem, double xFeet) {
+    m_drive = subsystem;
+    distanceToTravelInFeet = xFeet;
     // Use addRequirements() here to declare subsystem dependencies.
-    distanceToTravelInFeet = feet;
+    addRequirements(subsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    withTimeout(0.5 * distanceToTravelInFeet); // 0.5 seconds per foot
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    m_drive.arcade(0.5, 0.0);
   }
 
   // Called once the command ends or is interrupted.

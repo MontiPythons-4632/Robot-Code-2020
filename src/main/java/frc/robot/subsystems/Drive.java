@@ -49,16 +49,13 @@ public class Drive extends SubsystemBase {
     differentialDrive.setExpiration(0.3);
     differentialDrive.setMaxOutput(1.0);
 
-    // pigeon = new PigeonIMU(leftFront);
-
-    /* factory default values */
+    // factory default values
     rightFront.configFactoryDefault();
     rightBack.configFactoryDefault();
     leftFront.configFactoryDefault();
     leftBack.configFactoryDefault();
 
     //[4] adjust sensor phase so sensor moves positive when Talon LEDs are green
-    
     rightFront.setSensorPhase(true);
     leftFront.setSensorPhase(true);
     rightBack.setSensorPhase(true);
