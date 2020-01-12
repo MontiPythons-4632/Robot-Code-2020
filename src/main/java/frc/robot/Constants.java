@@ -16,11 +16,27 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final double driveSlow = 0.2;
-    public static final double driveNorm = 0.6;
-    public static final double driveFast = 0.8;
+    // Constants for Drive Subsystem
+    public final class DriveConstants {
 
-    public static final boolean DEBUG = true;
+        public static final boolean DEBUG = false;
 
-    
+        public static final double kDriveSlow = 0.2;
+        public static final double kDriveNorm = 0.6;
+        public static final double kDriveFast = 0.8;
+
+
+
+    }
+
+    // Constants for BeefCake Subsystem
+    public final class BeefCakeConstants {
+
+        public static final boolean DEBUG = true;
+
+        public static final double kFeederSpeed = 0.4;
+        public static final double kAngleSpeed = 0.4;
+        public static final double kLauncherSpeed = 0.8;
+
+    }
 }

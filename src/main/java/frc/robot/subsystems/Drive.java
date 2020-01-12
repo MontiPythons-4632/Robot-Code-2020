@@ -67,9 +67,6 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if ( Constants.DEBUG ) {
-    //   System.out.println("Starting Drive");
-    // }
   }
 
   public void arcade(double speed, double direction) {

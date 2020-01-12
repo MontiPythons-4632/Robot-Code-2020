@@ -27,7 +27,7 @@ public class StartBeefCakeFeed extends CommandBase {
   @Override
   public void initialize() {
     System.out.println("Starting Drive");
-    beefCake.feedOn(0.6);
+    beefCake.feederOn();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

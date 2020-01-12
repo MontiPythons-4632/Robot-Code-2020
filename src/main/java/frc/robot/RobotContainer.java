@@ -14,6 +14,7 @@ import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import static edu.wpi.first.wpilibj.Joystick.ButtonType;
 
@@ -36,7 +37,7 @@ public class RobotContainer {
 
   Joystick beefCakeJoystick = new Joystick(1);
  
-
+  // Deine a 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
@@ -56,16 +57,32 @@ public class RobotContainer {
   private void configureButtonBindings() {  
     System.out.println("Setting Bindings");
 
-    new JoystickButton(beefCakeJoystick, 1)
-        .whenPressed(this.startBeefCakeFeed);  
+    new JoystickButton(this.beefCakeJoystick, 1)
+        .whenPressed( new ConditionalCommand(
+                          new InstantCommand(this.beefCake::feederOn, this.beefCake),
+                          new InstantCommand(this.beefCake::launcherOn, this.beefCake),
+                          this.beefCake.isLauncherAtSpeed()
+                      )
+        )
+        .whenReleased( this.beefCake::feederOff);
   
-    new JoystickButton(beefCakeJoystick, 2)
-      .whenPressed(this.startBeefCakeFeed);  
-    
-    new JoystickButton(beefCakeJoystick, 3)
-    .whenPressed(this.startBeefCakeFeed);  
-  }
+    new JoystickButton(this.beefCakeJoystick, 6)
+      .whenPressed(this.beefCake::feederOn);
 
+    new JoystickButton(this.beefCakeJoystick, 7)
+      .whenPressed(this.beefCake::feederOff);
+
+    new JoystickButton(this.beefCakeJoystick, 10)
+      .whenPressed(this.beefCake::adjustAngleUp)
+      .whenReleased(this.beefCake::stopAngle);
+    
+      new JoystickButton(this.beefCakeJoystick, 11)
+      .whenPressed(this.beefCake::adjustAngleDown)
+      .whenReleased(this.beefCake::stopAngle);
+
+
+  }      
+    
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
