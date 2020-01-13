@@ -39,11 +39,11 @@ public class BeefCake extends SubsystemBase {
 
     launcherLeft = new Spark(1);
     addChild("Launcher Left", launcherLeft);
-    launcherLeft.setInverted(false);
+    launcherLeft.setInverted(true);
 
     launcherRight = new Spark(2);
     addChild("Launcher Right", launcherRight);
-    launcherRight.setInverted(true);
+    launcherRight.setInverted(false);
 
     launcher = new SpeedControllerGroup(launcherRight, launcherLeft);
     addChild("Launcher", launcher);
@@ -55,6 +55,7 @@ public class BeefCake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
   }
 
   public void feederOn() {
@@ -73,6 +74,10 @@ public class BeefCake extends SubsystemBase {
     }
 
     feed.stopMotor();
+  }
+
+  public void feederJoystick(double speed) {
+    feed.setSpeed(speed);
   }
 
   public boolean isFeederOn() {

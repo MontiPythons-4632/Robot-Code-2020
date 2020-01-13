@@ -9,7 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
+// import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,7 +36,8 @@ public class RobotContainer {
   private StartBeefCakeFeed startBeefCakeFeed = new StartBeefCakeFeed(beefCake);
 
   Joystick beefCakeJoystick = new Joystick(1);
- 
+  private BeefCakeJoystickAngle beefCakeJoystickAngle = new BeefCakeJoystickAngle(beefCake, beefCakeJoystick);
+
   // Deine a 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -58,19 +59,23 @@ public class RobotContainer {
     System.out.println("Setting Bindings");
 
     new JoystickButton(this.beefCakeJoystick, 1)
-        .whenPressed( new ConditionalCommand(
-                          new InstantCommand(this.beefCake::feederOn, this.beefCake),
-                          new InstantCommand(this.beefCake::launcherOn, this.beefCake),
-                          this.beefCake.isLauncherAtSpeed()
-                      )
-        )
-        .whenReleased( this.beefCake::feederOff);
+       .whenPressed(new InstantCommand(this.beefCake::feederOn, this.beefCake))
+       .whenReleased( this.beefCake::feederOff);
+
+    // new JoystickButton(this.beefCakeJoystick, 1)
+    //     .whenPressed( new ConditionalCommand(
+    //                       new InstantCommand(this.beefCake::feederOn, this.beefCake),
+    //                       new InstantCommand(),
+    //                       this.beefCake.isLauncherAtSpeed()
+    //                   )
+        // )
+        // .whenReleased( this.beefCake::feederOff);
   
     new JoystickButton(this.beefCakeJoystick, 6)
-      .whenPressed(this.beefCake::feederOn);
+      .whenPressed(this.beefCake::launcherOn);
 
     new JoystickButton(this.beefCakeJoystick, 7)
-      .whenPressed(this.beefCake::feederOff);
+      .whenPressed(this.beefCake::launcherOff);
 
     new JoystickButton(this.beefCakeJoystick, 10)
       .whenPressed(this.beefCake::adjustAngleUp)
