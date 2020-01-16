@@ -7,36 +7,35 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.Drive;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Drive;
 
-public class DriveForwardXFeet extends CommandBase {
+public class DriveJoystick extends CommandBase {
   /**
-   * Creates a new DriveForwardXFeet.
+   * Creates a new DriveJoystick.
    */
-  private final Drive m_drive;
+  private Drive drive;
+  private Joystick joystick;
 
-  double distanceToTravelInFeet;
-
-  public DriveForwardXFeet(Drive subsystem, double xFeet) {
-    m_drive = subsystem;
-    distanceToTravelInFeet = xFeet;
+  public DriveJoystick(Drive subsystem, Joystick controller) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+    this.drive = subsystem;
+    this.joystick = controller;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    withTimeout(0.5 * distanceToTravelInFeet); // 0.5 seconds per foot
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("Driving Forwrd%");
+    double speed = this.joystick.getY();
+    double direction = this.joystick.getX();
 
-    m_drive.arcade(0.5, 0.0);
+    this.drive.arcade(speed, direction);
   }
 
   // Called once the command ends or is interrupted.

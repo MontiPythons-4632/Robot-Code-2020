@@ -36,11 +36,13 @@ public class Drive extends SubsystemBase {
     leftFront = new WPI_TalonSRX(1);
     leftBack = new WPI_VictorSPX(2);
     left = new SpeedControllerGroup(leftFront, leftBack);
+    left.setInverted(true);
     addChild("Left",left);
     
     rightFront = new WPI_TalonSRX(3);
     rightBack = new WPI_VictorSPX(4);
     right = new SpeedControllerGroup(rightFront, rightBack);
+    right.setInverted(true);
     addChild("Right",right);
     
     differentialDrive = new DifferentialDrive(left, right);

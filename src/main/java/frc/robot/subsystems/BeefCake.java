@@ -76,10 +76,7 @@ public class BeefCake extends SubsystemBase {
     feed.stopMotor();
   }
 
-  public void feederJoystick(double speed) {
-    feed.setSpeed(speed);
-  }
-
+ 
   public boolean isFeederOn() {
 
     if ( this.feed.getSpeed() > 0.0 ) {
@@ -141,6 +138,10 @@ public class BeefCake extends SubsystemBase {
 
   public void stopAngle() {
     angle.stopMotor();
+  }
+
+  public void angleJoystick(double speed) {
+    angle.set(speed);
   }
 
 

@@ -44,7 +44,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     
-
+    this.driveXFeet.withTimeout(5.0);
     // Configure the button bindings
     configureButtonBindings();
   }
