@@ -97,6 +97,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    //  Tells the robot to run commands in the main loop
+    CommandScheduler.getInstance().run();
   }
 
   @Override

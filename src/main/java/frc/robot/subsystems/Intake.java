@@ -8,17 +8,38 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.SpeedController;
+
+import java.util.function.BooleanSupplier;
+
+import javax.swing.text.DefaultEditorKit.BeepAction;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
+
+import frc.robot.Constants.BeefCakeConstants;
 
 public class Intake extends SubsystemBase {
   /**
    * Creates a new Intake.
    */
+
+  private final Spark intake;
+  
   public Intake() {
 
+    intake = new Spark(0);
+    addChild("Intake", intake);
+  
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
+
+
+
 }

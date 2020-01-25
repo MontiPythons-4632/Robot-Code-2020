@@ -21,9 +21,9 @@ public final class Constants {
 
         public static final boolean DEBUG = false;
 
-        public static final double kDriveSlow = 0.2;
-        public static final double kDriveNorm = 0.6;
-        public static final double kDriveFast = 0.8;
+        public static final double kDriveSlow = 0.45;
+        public static final double kDriveNorm = 0.7;
+        public static final double kDriveFast = 1.0;
 
 
 

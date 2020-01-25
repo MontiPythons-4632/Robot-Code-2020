@@ -19,7 +19,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
-import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 
 public class Drive extends SubsystemBase {
   //Creates a new Drive.
@@ -31,18 +31,19 @@ public class Drive extends SubsystemBase {
   private WPI_VictorSPX rightBack;
   private SpeedControllerGroup right;
   private DifferentialDrive differentialDrive;
+  private double speedLimit;
 
   public Drive() {
     leftFront = new WPI_TalonSRX(1);
     leftBack = new WPI_VictorSPX(2);
     left = new SpeedControllerGroup(leftFront, leftBack);
-    left.setInverted(true);
+    left.setInverted(false);
     addChild("Left",left);
     
     rightFront = new WPI_TalonSRX(3);
     rightBack = new WPI_VictorSPX(4);
     right = new SpeedControllerGroup(rightFront, rightBack);
-    right.setInverted(true);
+    right.setInverted(false);
     addChild("Right",right);
     
     differentialDrive = new DifferentialDrive(left, right);
@@ -50,6 +51,8 @@ public class Drive extends SubsystemBase {
     differentialDrive.setSafetyEnabled(false);
     differentialDrive.setExpiration(0.3);
     differentialDrive.setMaxOutput(1.0);
+
+    this.speedLimit = DriveConstants.kDriveNorm;
 
     // factory default values
     rightFront.configFactoryDefault();
@@ -73,6 +76,23 @@ public class Drive extends SubsystemBase {
 
   public void arcade(double speed, double direction) {
     /* Takes parameters and sets direction */
-    this.differentialDrive.arcadeDrive(-1.0*speed, direction);
+  
+    // System.out.format("speed=%d--direction=%d", speed, direction);
+
+    this.differentialDrive.arcadeDrive(speed*this.speedLimit, direction*this.speedLimit);
   }
+
+  //  Change robot speed limit. Based on buttons 2 and 3 in RobotContainer
+  public void setLimitNorm() {
+    this.speedLimit = DriveConstants.kDriveNorm;
+  }
+  
+  public void setLimitFast() {
+    this.speedLimit = DriveConstants.kDriveFast;
+  }
+
+  public void setLimitSlow() {
+    this.speedLimit = DriveConstants.kDriveSlow;
+  }
+
 }
