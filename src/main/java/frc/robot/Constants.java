@@ -35,7 +35,7 @@ public final class Constants {
         public static final boolean DEBUG = true;
 
         public static final double kFeederSpeed = 0.6;
-        public static final double kAngleSpeed = 0.6;
+        public static final double kAngleSpeed = 0.25;
         public static final double kLauncherSpeed = 1.0;
 
     }

@@ -96,13 +96,13 @@ public class RobotContainer {
       .whenPressed(this.beefCake::launcherOff);
 
     //  Angles the launcher with buttons
-    // new JoystickButton(this.beefCakeJoystick, 10)
-    //   .whenPressed(this.beefCake::adjustAngleUp)
-    //   .whenReleased(this.beefCake::stopAngle);
+    new JoystickButton(this.beefCakeJoystick, 10)
+      .whenPressed(this.beefCake::adjustAngleUp)
+      .whenReleased(this.beefCake::stopAngle);
     
-    // new JoystickButton(this.beefCakeJoystick, 11)
-    //   .whenPressed(this.beefCake::adjustAngleDown)
-    //   .whenReleased(this.beefCake::stopAngle);
+    new JoystickButton(this.beefCakeJoystick, 11)
+      .whenPressed(this.beefCake::adjustAngleDown)
+      .whenReleased(this.beefCake::stopAngle);
 
 
   }      
