@@ -17,10 +17,15 @@ public class DriveForwardXFeet extends CommandBase {
   private final Drive m_drive;
 
   double distanceToTravelInFeet;
+  double speed;
+  double startDistance;
 
-  public DriveForwardXFeet(Drive subsystem, double xFeet) {
+  public DriveForwardXFeet(Drive subsystem, double xFeet, double speed) {
     m_drive = subsystem;
     distanceToTravelInFeet = xFeet;
+    this.speed = speed;
+    this.startDistance = this.m_drive.getDistanceTraveled();
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -36,7 +41,7 @@ public class DriveForwardXFeet extends CommandBase {
   public void execute() {
     System.out.println("Driving Forwrd%");
 
-    m_drive.arcade(0.5, 0.0);
+    m_drive.arcade(this.speed, 0);
   }
 
   // Called once the command ends or is interrupted.
@@ -47,6 +52,11 @@ public class DriveForwardXFeet extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+
+    if ( (this.m_drive.getDistanceTraveled() - this.startDistance) >= (this.distanceToTravelInFeet * 12) ) {
+        return true;
+    }
+
     return false;
   }
 }
