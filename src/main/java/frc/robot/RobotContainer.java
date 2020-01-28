@@ -111,6 +111,9 @@ public class RobotContainer {
     //   .whenPressed(this.beefCake::adjustAngleDown)
     //   .whenReleased(this.beefCake::stopAngle);
 
+    new JoystickButton(this.driveJoystick, 1)
+      .whenPressed(this.beefCake::intakeOn)
+      .whenReleased(this.beefCake::intakeOff);
 
   }      
     
