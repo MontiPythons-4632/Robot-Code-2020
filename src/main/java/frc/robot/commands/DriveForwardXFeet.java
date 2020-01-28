@@ -21,8 +21,8 @@ public class DriveForwardXFeet extends CommandBase {
   double startDistance;
 
   public DriveForwardXFeet(Drive subsystem, double xFeet, double speed) {
-    m_drive = subsystem;
-    distanceToTravelInFeet = xFeet;
+    this.m_drive = subsystem;
+    this.distanceToTravelInFeet = xFeet;
     this.speed = speed;
     this.startDistance = this.m_drive.getDistanceTraveled();
 

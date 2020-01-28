@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import static edu.wpi.first.wpilibj.Joystick.ButtonType;
 
+import frc.robot.Constants.*;
+
 import java.util.Set;
 
 // import edu.wpi.first.wpilibj.Joystick;
@@ -74,15 +76,6 @@ public class RobotContainer {
        .whenPressed(new InstantCommand(this.beefCake::feederOn, this.beefCake))
        .whenReleased( this.beefCake::feederOff);
 
-    // new JoystickButton(this.beefCakeJoystick, 1)
-    //     .whenPressed( new ConditionalCommand(
-    //                       new InstantCommand(this.beefCake::feederOn, this.beefCake),
-    //                       new InstantCommand(),
-    //                       this.beefCake.isLauncherAtSpeed()
-    //                   )
-        // )
-        // .whenReleased( this.beefCake::feederOff);
-
     //  Change robot speed limit. Based on buttons 2 and 3
     new JoystickButton(this.driveJoystick, 3)
       .whenPressed(this.drive::setLimitFast)
@@ -98,10 +91,16 @@ public class RobotContainer {
 
     new JoystickButton(this.beefCakeJoystick, 7)
       .whenPressed(this.beefCake::launcherOff);   
-      
+    
+    //  Runs the DriveForwardXFeet command once
     new JoystickButton(this.driveJoystick, 7)
       .whenPressed(new DriveForwardXFeet(this.drive, 6.0, 0.8))
       ;
+
+    //  Reverses the drive direction for Shooting vs Intake
+    new JoystickButton(this.driveJoystick, 1)
+      .whenPressed(new InstantCommand(this.drive::reverseDrive, this.drive))
+    ;
 
     //  Angles the launcher with buttons
     // new JoystickButton(this.beefCakeJoystick, 10)

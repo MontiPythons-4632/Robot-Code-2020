@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.AnalogAccelerometer;
+import edu.wpi.first.wpilibj.AnalogGyro;
 
 import frc.robot.Constants.DriveConstants;
 
@@ -34,17 +36,15 @@ public class Drive extends SubsystemBase {
   private SpeedControllerGroup right;
   private DifferentialDrive differentialDrive;
   private double speedLimit;
+  private boolean aimingMode;
   private Encoder leftEncoder;
   private Encoder rightEncoder;
-  double leftDistanceTraveled;
-  double rightDistanceTraveled;
+  private double leftDistanceTraveled;
+  private double rightDistanceTraveled;
+  private AnalogGyro analogGyro1;
 
   // Move this to constants%
-  //private static final double cpr = 7/4; //if am-2861a
-  // private static final double cpr = 360; //if am-3132
   private static final double cpr = 214; //if am-3314a
-  // private static final double cpr = 1024; //if am-3445
-  // private static final double cpr = 64; //if am-4027
   private static final double whd = 6; // for 6 inch wheel
 
 
@@ -52,13 +52,13 @@ public class Drive extends SubsystemBase {
     leftFront = new WPI_TalonSRX(1);
     leftBack = new WPI_VictorSPX(2);
     left = new SpeedControllerGroup(leftFront, leftBack);
-    left.setInverted(false);
+    left.setInverted(this.aimingMode);
     addChild("Left",left);
     
     rightFront = new WPI_TalonSRX(3);
     rightBack = new WPI_VictorSPX(4);
     right = new SpeedControllerGroup(rightFront, rightBack);
-    right.setInverted(false);
+    right.setInverted(this.aimingMode);
     addChild("Right",right);
     
     differentialDrive = new DifferentialDrive(left, right);
@@ -85,14 +85,19 @@ public class Drive extends SubsystemBase {
     leftEncoder = new Encoder(6,7);
     leftEncoder.reset();
     leftEncoder.setDistancePerPulse(Math.PI*whd/cpr); //distance per pulse is pi* (wheel diameter / counts per revolution)
-    leftEncoder.setReverseDirection(true);
+    leftEncoder.setReverseDirection(!this.aimingMode);
 
     rightEncoder = new Encoder(8,9);
     rightEncoder.reset();
     rightEncoder.setDistancePerPulse(Math.PI*whd/cpr); //distance per pulse is pi* (wheel diameter / counts per revolution)
-    rightEncoder.setReverseDirection(false);
+    rightEncoder.setReverseDirection(this.aimingMode);
 
+    // Setup Up Pidgeon
+    analogGyro1 = new AnalogGyro(0);
 
+    addChild("AnalogGyro 1",analogGyro1);
+
+    analogGyro1.setSensitivity(0.007);
   }
 
   public void initDefaultCommand() {
@@ -103,18 +108,10 @@ public class Drive extends SubsystemBase {
 
     // Update the distance
     this.leftDistanceTraveled = leftEncoder.getDistance();
-    int leftRaw = leftEncoder.getRaw();
-    double leftDpp = leftEncoder.getDistancePerPulse();
     SmartDashboard.putNumber("Left Distance", this.leftDistanceTraveled);
-    SmartDashboard.putNumber("Left Raw", leftRaw);
-    SmartDashboard.putNumber("Left DPP", leftDpp);
 
     this.rightDistanceTraveled = rightEncoder.getDistance();
-    int rightRaw = rightEncoder.getRaw();
-    double rightDpp = rightEncoder.getDistancePerPulse();
     SmartDashboard.putNumber("Right Distance", this.rightDistanceTraveled);
-    SmartDashboard.putNumber("Right Raw", rightRaw);    
-    SmartDashboard.putNumber("Right DPP", rightDpp);
 
   }
 
@@ -139,8 +136,14 @@ public class Drive extends SubsystemBase {
     this.speedLimit = DriveConstants.kDriveSlow;
   }
 
+  public void reverseDrive() {
+    this.aimingMode = !this.aimingMode;
+  }
+
+
+  //  In the future replace with a getDistLeft() and getDistRight()
   public double getDistanceTraveled() {
-    return this.leftDistanceTraveled;
+    return (this.leftDistanceTraveled + this.rightDistanceTraveled) / 2;
   }
 
 }

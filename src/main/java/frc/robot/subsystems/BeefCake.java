@@ -18,7 +18,7 @@ import javax.swing.text.DefaultEditorKit.BeepAction;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
-import frc.robot.Constants.BeefCakeConstants;
+import frc.robot.Constants.*;
 
 public class BeefCake extends SubsystemBase {
   /**
@@ -102,7 +102,7 @@ public class BeefCake extends SubsystemBase {
 
     launcher.stopMotor();
   }
-
+  
   public BooleanSupplier isLauncherOn() {
 
     
