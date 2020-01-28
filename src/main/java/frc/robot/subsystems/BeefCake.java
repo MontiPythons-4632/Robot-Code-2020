@@ -144,5 +144,20 @@ public class BeefCake extends SubsystemBase {
     angle.set(speed);
   }
 
+  public void intakeOn() {
+    if ( BeefCakeConstants.DEBUG ) {
+      System.out.println("intake is active");
+    }
+
+    // feed.setSpeed(BeefCakeConstants.kFeederSpeed);
+  }
+
+  public void intakeOff() {
+    if ( BeefCakeConstants.DEBUG ) {
+      System.out.println("intake is not active");
+    }
+
+    // feed.setSpeed(BeefCakeConstants.kFeederSpeed);
+  }
 
 }
