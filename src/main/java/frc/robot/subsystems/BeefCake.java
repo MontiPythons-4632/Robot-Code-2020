@@ -55,13 +55,14 @@ public class BeefCake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
+    System.out.println("----------------------------------memes lol");
   }
 
+  //  Turns the feeder On and Off
   public void feederOn() {
 
     if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("feederOn is active");
+      System.out.println("Feeder is active");
     }
 
     feed.setSpeed(BeefCakeConstants.kFeederSpeed);
@@ -70,22 +71,31 @@ public class BeefCake extends SubsystemBase {
   public void feederOff() {
 
     if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("feederOff is active");
+      System.out.println("Feeder is not active");
     }
 
     feed.stopMotor();
   }
 
- 
-  public boolean isFeederOn() {
+  // public boolean isFeederOn() {
 
-    if ( this.feed.getSpeed() > 0.0 ) {
-        return true;
-    } else {
-        return false;
-    }
-  }
+  //   if ( this.feed.getSpeed() > 0.0 ) {
+  //       return true;
+  //   } else {
+  //       return false;
+  //   }
+  // }
 
+  // public BooleanSupplier isLauncherOn() {
+
+  //   if ( this.feed.getSpeed() > 0.0 ) {
+  //       return () -> true;
+  //   } else {
+  //       return () -> false;
+  //   }
+  // }
+
+  //  Turns the launcher wheels On and Off
   public void launcherOn() {
     if ( BeefCakeConstants.DEBUG ) {
       System.out.println("launcherOn is active");
@@ -103,47 +113,35 @@ public class BeefCake extends SubsystemBase {
     launcher.stopMotor();
   }
 
-  public BooleanSupplier isLauncherOn() {
+  //  Adjusts the angle of the launcher Up and Down, and Stops it (using buttons)
+  // public void adjustAngleUp() {
 
-    
-    if ( this.feed.getSpeed() > 0.0 ) {
-        return () -> true;
-    } else {
-        return () -> false;
-    }
-  }
+  //   if ( BeefCakeConstants.DEBUG ) {
+  //     System.out.println("adjustAngleUp is active");
+  //   }
 
-  public BooleanSupplier isLauncherAtSpeed() {
-    return this.isLauncherOn();
-   
-  }
+  //   angle.set(BeefCakeConstants.kAngleSpeed);
+  // }
 
-  public void adjustAngleUp() {
+  // public void adjustAngleDown() {
 
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("adjustAngleUp is active");
-    }
+  //   if ( BeefCakeConstants.DEBUG ) {
+  //     System.out.println("adjustAngleDown is active");
+  //   }
 
-    angle.set(BeefCakeConstants.kAngleSpeed);
-  }
+  //   angle.set(BeefCakeConstants.kAngleSpeed * -1.0);
+  // }
 
-  public void adjustAngleDown() {
+  // public void stopAngle() {
+  //   angle.stopMotor();
+  // }
 
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("adjustAngleDown is active");
-    }
-
-    angle.set(BeefCakeConstants.kAngleSpeed * -1.0);
-  }
-
-  public void stopAngle() {
-    angle.stopMotor();
-  }
-
+  //  Adjusts the launcher Up and Down (using the angle of the co-pilot joystick)
   public void angleJoystick(double speed) {
     angle.set(speed);
   }
 
+  //  Turns the intake on and off
   public void intakeOn() {
     if ( BeefCakeConstants.DEBUG ) {
       System.out.println("intake is active");

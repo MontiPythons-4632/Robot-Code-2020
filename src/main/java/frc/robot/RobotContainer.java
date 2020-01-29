@@ -39,8 +39,8 @@ public class RobotContainer {
 
   // The robot's commands are defined here...
   private BeefCakeJoystickAngle beefCakeJoystickAngle = new BeefCakeJoystickAngle(beefCake, beefCakeJoystick);
-  private final DriveJoystick driveJoystickCommand = new DriveJoystick(drive, driveJoystick);
   private final DriveForwardXFeet driveXFeet = new DriveForwardXFeet(drive, 10.0);
+  private final DriveJoystick driveJoystickCommand = new DriveJoystick(drive, driveJoystick);
   private StartBeefCakeFeed startBeefCakeFeed = new StartBeefCakeFeed(beefCake);
 
   // The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -49,10 +49,14 @@ public class RobotContainer {
     configureButtonBindings();
 
     this.drive.setDefaultCommand(
-      new RunCommand(() -> drive.arcade(driveJoystick.getY()*-1.0,
-                                        driveJoystick.getX()
-                                       ), 
+      new RunCommand(() -> drive.arcade(driveJoystick.getY()*-1.0, driveJoystick.getX()), 
                            drive
+                    )
+    );
+
+    this.beefCake.setDefaultCommand(
+      new RunCommand(() -> beefCake.angleJoystick(beefCakeJoystick.getY()),
+                           beefCake
                     )
     );
   }
@@ -66,18 +70,10 @@ public class RobotContainer {
   private void configureButtonBindings() {  
     System.out.println("Setting Bindings");
 
+    //  Activate/Deactivate the feeder
     new JoystickButton(this.beefCakeJoystick, 1)
        .whenPressed(new InstantCommand(this.beefCake::feederOn, this.beefCake))
        .whenReleased( this.beefCake::feederOff);
-
-    // new JoystickButton(this.beefCakeJoystick, 1)
-    //     .whenPressed( new ConditionalCommand(
-    //                       new InstantCommand(this.beefCake::feederOn, this.beefCake),
-    //                       new InstantCommand(),
-    //                       this.beefCake.isLauncherAtSpeed()
-    //                   )
-        // )
-        // .whenReleased( this.beefCake::feederOff);
 
     //  Change robot speed limit. Based on buttons 2 and 3
     new JoystickButton(this.driveJoystick, 3)
@@ -104,11 +100,12 @@ public class RobotContainer {
     //   .whenPressed(this.beefCake::adjustAngleDown)
     //   .whenReleased(this.beefCake::stopAngle);
 
+    // Control the intake
     new JoystickButton(this.driveJoystick, 1)
       .whenPressed(this.beefCake::intakeOn)
       .whenReleased(this.beefCake::intakeOff);
 
-  }      
+    }      
     
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
