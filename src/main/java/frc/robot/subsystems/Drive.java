@@ -14,15 +14,12 @@ import edu.wpi.first.wpilibj.PIDSource;
 import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.AnalogAccelerometer;
-import edu.wpi.first.wpilibj.AnalogGyro;
-
+import com.ctre.phoenix.sensors.PigeonIMU;
 import frc.robot.Constants.DriveConstants;
 
 public class Drive extends SubsystemBase {
@@ -36,12 +33,20 @@ public class Drive extends SubsystemBase {
   private SpeedControllerGroup right;
   private DifferentialDrive differentialDrive;
   private double speedLimit;
+
   private boolean aimingMode;
   private Encoder leftEncoder;
   private Encoder rightEncoder;
   private double leftDistanceTraveled;
   private double rightDistanceTraveled;
-  private AnalogGyro analogGyro1;
+
+  // Variables for Pigeon 9DOF Sensor
+  private PigeonIMU pigeon;
+  private double curX;
+  private double curY;
+  private double curZ;
+  private double curCompass;
+
 
   // Move this to constants%
   private static final double cpr = 214; //if am-3314a
@@ -92,8 +97,11 @@ public class Drive extends SubsystemBase {
     rightEncoder.setDistancePerPulse(Math.PI*whd/cpr); //distance per pulse is pi* (wheel diameter / counts per revolution)
     rightEncoder.setReverseDirection(this.aimingMode);
 
-    // Setup Up Pidgeon
-    analogGyro1 = new AnalogGyro(0);
+    // Initialize the Pigeon 9DOF
+    pigeon = new PigeonIMU(8);
+    pigeon.configFactoryDefault();
+    pigeon.setYaw(0.0);
+    pigeon.setFusedHeading(0.0);
 
     addChild("AnalogGyro 1",analogGyro1);
 
@@ -112,6 +120,25 @@ public class Drive extends SubsystemBase {
 
     this.rightDistanceTraveled = rightEncoder.getDistance();
     SmartDashboard.putNumber("Right Distance", this.rightDistanceTraveled);
+
+    // update the turn angle
+    double[] xyz_dps = new double[3];
+    double[] ypr_deg = new double[3];
+    short[] ba_xyz_acc = new short[3];
+
+    // Query the 9DOF sensor
+    // this.pigeon.getRawGyro(xyz_dps);
+    // this.pigeon.getBiasedAccelerometer(ba_xyz_acc);
+    this.pigeon.getYawPitchRoll(ypr_deg);
+    this.curX = ypr_deg[0];
+    this.curY = ypr_deg[1];
+    this.curZ = ypr_deg[2];
+
+    SmartDashboard.putNumber("Compass",this.pigeon.getAbsoluteCompassHeading());
+    SmartDashboard.putNumber("Yaw", this.curX);
+    SmartDashboard.putNumber("Pitch", this.curY);
+    SmartDashboard.putNumber("Roll", this.curZ);
+    //SmartDashboard.putNumber("X Accelerometer", this.curZ*100);
 
   }
 
@@ -144,6 +171,12 @@ public class Drive extends SubsystemBase {
   //  In the future replace with a getDistLeft() and getDistRight()
   public double getDistanceTraveled() {
     return (this.leftDistanceTraveled + this.rightDistanceTraveled) / 2;
+  }
+
+  public double getCurrentHeading() {
+
+      return this.curX;
+
   }
 
 }

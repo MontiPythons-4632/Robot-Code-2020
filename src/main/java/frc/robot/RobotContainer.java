@@ -96,6 +96,15 @@ public class RobotContainer {
     new JoystickButton(this.driveJoystick, 7)
       .whenPressed(new DriveForwardXFeet(this.drive, 6.0, 0.8))
       ;
+  
+    new JoystickButton(this.driveJoystick, 10)
+    .whenPressed(new TurnXDegrees(this.drive, 45.0, 0.6))
+    ;
+   
+    new JoystickButton(this.driveJoystick, 11)
+    .whenPressed(new TurnXDegrees(this.drive, -45.0, 0.6))
+    ;
+   
 
     //  Reverses the drive direction for Shooting vs Intake
     new JoystickButton(this.driveJoystick, 1)
