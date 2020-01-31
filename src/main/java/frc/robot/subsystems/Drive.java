@@ -147,7 +147,7 @@ public class Drive extends SubsystemBase {
   
     // System.out.format("speed=%d--direction=%d", speed, direction);
 
-    this.differentialDrive.arcadeDrive(speed*this.speedLimit, direction*this.speedLimit);
+    this.differentialDrive.arcadeDrive(speed*this.speedLimit, direction);
   }
 
   //  Change robot speed limit. Based on buttons 2 and 3 in RobotContainer

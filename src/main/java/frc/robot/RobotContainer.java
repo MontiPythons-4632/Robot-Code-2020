@@ -43,9 +43,9 @@ public class RobotContainer {
   private final BeefCake beefCake = new BeefCake();
 
   // The robot's commands are defined here...
-  private final DriveJoystick driveJoystickCommand = new DriveJoystick(drive, driveJoystick);
-
   private BeefCakeJoystickAngle beefCakeJoystickAngle = new BeefCakeJoystickAngle(beefCake, beefCakeJoystick);
+  private final DriveForwardXFeet driveXFeet = new DriveForwardXFeet(drive, 10.0);
+  private final DriveJoystick driveJoystickCommand = new DriveJoystick(drive, driveJoystick);
 
   private StartBeefCakeFeed startBeefCakeFeed = new StartBeefCakeFeed(beefCake);
 
@@ -55,10 +55,14 @@ public class RobotContainer {
     configureButtonBindings();
 
     this.drive.setDefaultCommand(
-      new RunCommand(() -> drive.arcade(driveJoystick.getY()*-1.0,
-                                        driveJoystick.getX()
-                                       ), 
+      new RunCommand(() -> drive.arcade(driveJoystick.getY()*-1.0, driveJoystick.getX()), 
                            drive
+                    )
+    );
+
+    this.beefCake.setDefaultCommand(
+      new RunCommand(() -> beefCake.angleJoystick(beefCakeJoystick.getY()),
+                           beefCake
                     )
     );
   }
@@ -72,6 +76,7 @@ public class RobotContainer {
   private void configureButtonBindings() {  
     System.out.println("Setting Bindings");
 
+    //  Activate/Deactivate the feeder
     new JoystickButton(this.beefCakeJoystick, 1)
        .whenPressed(new InstantCommand(this.beefCake::feederOn, this.beefCake))
        .whenReleased( this.beefCake::feederOff);
@@ -120,11 +125,12 @@ public class RobotContainer {
     //   .whenPressed(this.beefCake::adjustAngleDown)
     //   .whenReleased(this.beefCake::stopAngle);
 
+    // Control the intake
     new JoystickButton(this.driveJoystick, 1)
       .whenPressed(this.beefCake::intakeOn)
       .whenReleased(this.beefCake::intakeOff);
 
-  }      
+    }      
     
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

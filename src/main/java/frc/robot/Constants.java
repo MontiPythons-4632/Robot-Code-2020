@@ -24,6 +24,7 @@ public final class Constants {
         public static final double kDriveSlow = 0.45;
         public static final double kDriveNorm = 0.7;
         public static final double kDriveFast = 1.0;
+
     }
 
     // Constants for BeefCake Subsystem
@@ -31,8 +32,8 @@ public final class Constants {
 
         public static final boolean DEBUG = true;
 
-        public static final double kFeederSpeed = 0.3;
-        public static final double kAngleSpeed = 0.6;
+        public static final double kFeederSpeed = 0.6;
+        public static final double kAngleSpeed = 0.7;
         public static final double kLauncherSpeed = 1.0;
 
         public static final double kIntake = 0.5;
