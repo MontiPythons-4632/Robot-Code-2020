@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.ctre.phoenix.sensors.PigeonIMU;
 
 import frc.robot.Constants.DriveConstants;
 
@@ -34,10 +35,19 @@ public class Drive extends SubsystemBase {
   private SpeedControllerGroup right;
   private DifferentialDrive differentialDrive;
   private double speedLimit;
+
+  // Variables for wheel rotations
   private Encoder leftEncoder;
   private Encoder rightEncoder;
-  double leftDistanceTraveled;
-  double rightDistanceTraveled;
+  private double leftDistanceTraveled;
+  private double rightDistanceTraveled;
+
+  // Variables for Pigeon 9DOF Sensor
+  private PigeonIMU pigeon;
+  private double curX;
+  private double curY;
+  private double curZ;
+  private double curCompass;
 
   // Move this to constants%
   //private static final double cpr = 7/4; //if am-2861a
@@ -92,6 +102,11 @@ public class Drive extends SubsystemBase {
     rightEncoder.setDistancePerPulse(Math.PI*whd/cpr); //distance per pulse is pi* (wheel diameter / counts per revolution)
     rightEncoder.setReverseDirection(false);
 
+    // Initialize the Pigeon 9DOF
+    pigeon = new PigeonIMU(0);
+    pigeon.configFactoryDefault();
+    pigeon.setYaw(0.0);
+    pigeon.setFusedHeading(0.0, 0);
 
   }
 
@@ -115,6 +130,25 @@ public class Drive extends SubsystemBase {
     SmartDashboard.putNumber("Right Distance", this.rightDistanceTraveled);
     SmartDashboard.putNumber("Right Raw", rightRaw);    
     SmartDashboard.putNumber("Right DPP", rightDpp);
+
+    // update the turn angle
+    double[] xyz_dps = new double[3];
+    double[] ypr_deg = new double[3];
+    short[] ba_xyz_acc = new short[3];
+
+    // Query the 9DOF sensor
+    // this.pigeon.getRawGyro(xyz_dps);
+    // this.pigeon.getBiasedAccelerometer(ba_xyz_acc);
+    this.pigeon.getYawPitchRoll(ypr_deg);
+    this.curX = ypr_deg[0] % 360;
+    this.curY = ypr_deg[1];
+    this.curZ = ypr_deg[2];
+
+    SmartDashboard.putNumber("Compass",this.pigeon.getAbsoluteCompassHeading());
+    SmartDashboard.putNumber("Yaw", this.curX*100);
+    SmartDashboard.putNumber("Pitch", this.curY);
+    SmartDashboard.putNumber("Roll", this.curZ*100);
+    SmartDashboard.putNumber("X Accelerometer", this.curZ*100);
 
   }
 
@@ -141,6 +175,12 @@ public class Drive extends SubsystemBase {
 
   public double getDistanceTraveled() {
     return this.leftDistanceTraveled;
+  }
+
+  public double getCurrentHeading() {
+
+      return this.curX;
+
   }
 
 }
