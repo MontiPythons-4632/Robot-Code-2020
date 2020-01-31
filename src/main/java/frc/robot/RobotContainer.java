@@ -15,9 +15,14 @@ import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import static edu.wpi.first.wpilibj.Joystick.ButtonType;
+
+import frc.robot.Constants.*;
+
+import java.util.Set;
 
 // import edu.wpi.first.wpilibj.Joystick;
 // import edu.wpi.first.wpilibj.buttons.Button;
@@ -41,11 +46,12 @@ public class RobotContainer {
   private BeefCakeJoystickAngle beefCakeJoystickAngle = new BeefCakeJoystickAngle(beefCake, beefCakeJoystick);
   private final DriveForwardXFeet driveXFeet = new DriveForwardXFeet(drive, 10.0);
   private final DriveJoystick driveJoystickCommand = new DriveJoystick(drive, driveJoystick);
+
   private StartBeefCakeFeed startBeefCakeFeed = new StartBeefCakeFeed(beefCake);
 
   // The container for the robot.  Contains subsystems, OI devices, and commands.
   public RobotContainer() {
-    this.driveXFeet.withTimeout(5.0);
+
     configureButtonBindings();
 
     this.drive.setDefaultCommand(
@@ -89,7 +95,26 @@ public class RobotContainer {
       .whenPressed(this.beefCake::launcherOn);
 
     new JoystickButton(this.beefCakeJoystick, 7)
-      .whenPressed(this.beefCake::launcherOff);
+      .whenPressed(this.beefCake::launcherOff);   
+    
+    //  Runs the DriveForwardXFeet command once
+    new JoystickButton(this.driveJoystick, 7)
+      .whenPressed(new DriveForwardXFeet(this.drive, 6.0, 0.8))
+      ;
+  
+    new JoystickButton(this.driveJoystick, 10)
+    .whenPressed(new TurnXDegrees(this.drive, 45.0, 0.6))
+    ;
+   
+    new JoystickButton(this.driveJoystick, 11)
+    .whenPressed(new TurnXDegrees(this.drive, -45.0, 0.6))
+    ;
+   
+
+    //  Reverses the drive direction for Shooting vs Intake
+    new JoystickButton(this.driveJoystick, 1)
+      .whenPressed(new InstantCommand(this.drive::reverseDrive, this.drive))
+    ;
 
     //  Angles the launcher with buttons
     // new JoystickButton(this.beefCakeJoystick, 10)
@@ -115,6 +140,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     System.out.println("getting Autonomous Command");
-    return driveXFeet;
+    return new DriveForwardXFeet(this.drive, 2.0, 0.8);
   }
 }

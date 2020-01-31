@@ -36,5 +36,6 @@ public final class Constants {
         public static final double kAngleSpeed = 0.7;
         public static final double kLauncherSpeed = 1.0;
 
+        public static final double kIntake = 0.5;
     }
 }

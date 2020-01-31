@@ -7,41 +7,32 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.Drive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.networktables.*;
 
-public class DriveForwardXFeet extends CommandBase {
+public class LimeLightAlign extends CommandBase {
   /**
-   * Creates a new DriveForwardXFeet.
+   * Creates a new LimeLightAlign.
    */
-  private final Drive m_drive;
+    private double targetAquired;
+    private double horizontalOffset;
 
-  double distanceToTravelInFeet;
-  double speed;
-  double startDistance;
-
-  public DriveForwardXFeet(Drive subsystem, double xFeet, double speed) {
-    this.m_drive = subsystem;
-    this.distanceToTravelInFeet = xFeet;
-    this.speed = speed;
-    this.startDistance = this.m_drive.getDistanceTraveled();
-
+  public LimeLightAlign() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    withTimeout(0.5 * distanceToTravelInFeet); // 0.5 seconds per foot
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("Driving Forwrd%");
+    
+    this.targetAquired = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
+    this.horizontalOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
 
-    m_drive.arcade(this.speed, 0);
   }
 
   // Called once the command ends or is interrupted.
@@ -52,11 +43,6 @@ public class DriveForwardXFeet extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-
-    if ( (this.m_drive.getDistanceTraveled() - this.startDistance) >= (this.distanceToTravelInFeet * 12) ) {
-        return true;
-    }
-
     return false;
   }
 }
