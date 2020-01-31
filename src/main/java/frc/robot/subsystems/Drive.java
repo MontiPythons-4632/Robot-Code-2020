@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.PIDSource;
 import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -103,10 +102,10 @@ public class Drive extends SubsystemBase {
     rightEncoder.setReverseDirection(false);
 
     // Initialize the Pigeon 9DOF
-    pigeon = new PigeonIMU(0);
+    pigeon = new PigeonIMU(8);
     pigeon.configFactoryDefault();
     pigeon.setYaw(0.0);
-    pigeon.setFusedHeading(0.0, 0);
+    pigeon.setFusedHeading(0.0);
 
   }
 
@@ -140,15 +139,15 @@ public class Drive extends SubsystemBase {
     // this.pigeon.getRawGyro(xyz_dps);
     // this.pigeon.getBiasedAccelerometer(ba_xyz_acc);
     this.pigeon.getYawPitchRoll(ypr_deg);
-    this.curX = ypr_deg[0] % 360;
+    this.curX = ypr_deg[0];
     this.curY = ypr_deg[1];
     this.curZ = ypr_deg[2];
 
     SmartDashboard.putNumber("Compass",this.pigeon.getAbsoluteCompassHeading());
-    SmartDashboard.putNumber("Yaw", this.curX*100);
+    SmartDashboard.putNumber("Yaw", this.curX);
     SmartDashboard.putNumber("Pitch", this.curY);
-    SmartDashboard.putNumber("Roll", this.curZ*100);
-    SmartDashboard.putNumber("X Accelerometer", this.curZ*100);
+    SmartDashboard.putNumber("Roll", this.curZ);
+    //SmartDashboard.putNumber("X Accelerometer", this.curZ*100);
 
   }
 

@@ -104,11 +104,11 @@ public class RobotContainer {
       ;
   
     new JoystickButton(this.driveJoystick, 10)
-    .whenPressed(new TurnXDegrees(this.drive, 45.0, 0.8))
+    .whenPressed(new TurnXDegrees(this.drive, 45.0, 0.6))
     ;
    
     new JoystickButton(this.driveJoystick, 11)
-    .whenPressed(new TurnXDegrees(this.drive, -45.0, 0.8))
+    .whenPressed(new TurnXDegrees(this.drive, -45.0, 0.6))
     ;
    
 
