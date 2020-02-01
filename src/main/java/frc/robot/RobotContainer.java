@@ -15,6 +15,7 @@ import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -96,18 +97,29 @@ public class RobotContainer {
 
     new JoystickButton(this.beefCakeJoystick, 7)
       .whenPressed(this.beefCake::launcherOff);   
-    
+
+    //  Runs TestSequentialCommandGroup command once
+      new JoystickButton(this.driveJoystick, 6)
+      .whenPressed(
+        new SequentialCommandGroup(
+          new TurnXDegrees(this.drive, 45),
+          new DriveForwardXFeet(this.drive, 6.0, 0.8)        
+        )
+      )
+      ;
+
     //  Runs the DriveForwardXFeet command once
     new JoystickButton(this.driveJoystick, 7)
       .whenPressed(new DriveForwardXFeet(this.drive, 6.0, 0.8))
       ;
   
+    //  Turns the robot left or right 45 degrees ( +degrees is left, -degrees is right)
     new JoystickButton(this.driveJoystick, 10)
-    .whenPressed(new TurnXDegrees(this.drive, 45.0, 0.6))
+    .whenPressed(new TurnXDegrees(this.drive, 45.0))
     ;
    
     new JoystickButton(this.driveJoystick, 11)
-    .whenPressed(new TurnXDegrees(this.drive, -45.0, 0.6))
+    .whenPressed(new TurnXDegrees(this.drive, -45.0))
     ;
    
 

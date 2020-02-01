@@ -29,12 +29,12 @@ public class TurnXDegrees extends CommandBase {
    private double initSpeed;
    private double degrees_to_turn;
 
-  public TurnXDegrees(Drive subsystem, double degrees, double speed) {
+  public TurnXDegrees(Drive subsystem, double degrees) {  //  cant have a double speed because the robot will slide
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
     
     this.driveSubsystem = subsystem;
-    this.initSpeed = speed;
+    this.initSpeed = 0.6;
     this.degrees_to_turn = degrees;
 
     // this.degrees_to_turn = this.degrees_to_turn;

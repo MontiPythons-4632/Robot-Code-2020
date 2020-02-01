@@ -33,7 +33,7 @@ public class DriveForwardXFeet extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    withTimeout(0.5 * distanceToTravelInFeet); // 0.5 seconds per foot
+    // withTimeout(0.5 * distanceToTravelInFeet); // 0.5 seconds per foot
   }
 
   // Called every time the scheduler runs while the command is scheduled.
