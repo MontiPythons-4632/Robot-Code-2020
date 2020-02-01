@@ -26,7 +26,7 @@ public class TurnXDegrees extends CommandBase {
    private double initX;
    private double destX;
    private boolean isTurning;
-   private double speed;
+   private double initSpeed;
    private double degrees_to_turn;
 
   public TurnXDegrees(Drive subsystem, double degrees, double speed) {
@@ -34,14 +34,13 @@ public class TurnXDegrees extends CommandBase {
     addRequirements(subsystem);
     
     this.driveSubsystem = subsystem;
-    this.speed = speed;
+    this.initSpeed = speed;
     this.degrees_to_turn = degrees;
-    this.degrees_to_turn = this.degrees_to_turn;
-    this.initX = this.driveSubsystem.getCurrentHeading();
 
-    this.destX = this.initX + this.degrees_to_turn;
+    // this.degrees_to_turn = this.degrees_to_turn;
+    // this.initX = this.driveSubsystem.getCurrentHeading();
 
-    SmartDashboard.putNumber("Target Turn Angle", this.destX);
+    // this.destX = this.initX + this.degrees_to_turn;
   }
 
   // Called when the command is initially scheduled.
@@ -53,15 +52,17 @@ public class TurnXDegrees extends CommandBase {
     // this.destX = this.initX + this.degrees_to_turn;
     // SmartDashboard.putNumber("Target Turn Angle", this.destX);
 
-
+    this.initX = this.driveSubsystem.getCurrentHeading();
+    this.destX = this.initX + this.degrees_to_turn;
+    // System.out.println("Destination X: " + this.destX);
+    SmartDashboard.putNumber("Target Turn Angle", this.destX);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    // 
-    double speedLimit = DriveConstants.kDriveFast;
+    this.currX = this.driveSubsystem.getCurrentHeading();
 
     // Left is 1 Right is -1
     double direction = 1;
@@ -69,16 +70,19 @@ public class TurnXDegrees extends CommandBase {
             direction = -1;
     }
 
-    //slow as we get closer
-    if( Math.abs(this.currX - this.destX) < 10 ) {
-      speedLimit = DriveConstants.kDriveSlow;
-    }
+    // As currX approaches destX, THIS goes from 0 to 1, speedLimiter goes from 1 to 0
+    //                        v---^^^^------------------------------------------------------v
+    double speedLimiter = 1 - Math.abs((this.currX - this.initX) / (this.destX - this.initX));
+    double actualSpeed = (this.initSpeed * (speedLimiter)) + 0.5;
+    System.out.println(actualSpeed);
 
-    this.currX = this.driveSubsystem.getCurrentHeading();
-    
     SmartDashboard.putNumber("Current Turn Angle",this.currX);
 
-    this.driveSubsystem.arcade(this.speed*speedLimit, direction);
+    this.driveSubsystem.arcade(0, direction*actualSpeed);
+
+    // if( Math.abs(this.currX - this.destX) < 10 ) {
+    //   speedLimit = DriveConstants.kDriveSlow;
+    // }
   }
 
   // Called once the command ends or is interrupted.

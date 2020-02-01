@@ -103,9 +103,8 @@ public class Drive extends SubsystemBase {
     pigeon.setYaw(0.0);
     pigeon.setFusedHeading(0.0);
 
-    addChild("AnalogGyro 1",analogGyro1);
-
-    analogGyro1.setSensitivity(0.007);
+    // addChild("AnalogGyro 1",analogGyro1);
+    // analogGyro1.setSensitivity(0.007);
   }
 
   public void initDefaultCommand() {
@@ -147,7 +146,7 @@ public class Drive extends SubsystemBase {
   
     // System.out.format("speed=%d--direction=%d", speed, direction);
 
-    this.differentialDrive.arcadeDrive(speed*this.speedLimit, direction);
+    this.differentialDrive.arcadeDrive(speed*this.speedLimit, direction*this.speedLimit);
   }
 
   //  Change robot speed limit. Based on buttons 2 and 3 in RobotContainer

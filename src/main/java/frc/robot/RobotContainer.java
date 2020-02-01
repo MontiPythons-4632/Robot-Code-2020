@@ -44,7 +44,7 @@ public class RobotContainer {
 
   // The robot's commands are defined here...
   private BeefCakeJoystickAngle beefCakeJoystickAngle = new BeefCakeJoystickAngle(beefCake, beefCakeJoystick);
-  private final DriveForwardXFeet driveXFeet = new DriveForwardXFeet(drive, 10.0);
+  private final DriveForwardXFeet driveXFeet = new DriveForwardXFeet(drive, 10.0, 0.5);
   private final DriveJoystick driveJoystickCommand = new DriveJoystick(drive, driveJoystick);
 
   private StartBeefCakeFeed startBeefCakeFeed = new StartBeefCakeFeed(beefCake);
