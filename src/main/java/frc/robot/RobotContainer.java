@@ -102,15 +102,21 @@ public class RobotContainer {
       new JoystickButton(this.driveJoystick, 6)
       .whenPressed(
         new SequentialCommandGroup(
-          new TurnXDegrees(this.drive, 45),
-          new DriveForwardXFeet(this.drive, 6.0, 0.8)        
+          new DriveForwardXFeet(drive, 6.5, 0.8), 
+          new TurnXDegrees(drive, 62),
+          new DriveForwardXFeet(drive, 6.5, 0.8), 
+          new TurnXDegrees(drive, 62),
+          new DriveForwardXFeet(drive, 6.5, 0.8), 
+          new TurnXDegrees(drive, 62),
+          new DriveForwardXFeet(drive, 6.5, 0.8), 
+          new TurnXDegrees(drive, 62)
         )
       )
       ;
 
     //  Runs the DriveForwardXFeet command once
     new JoystickButton(this.driveJoystick, 7)
-      .whenPressed(new DriveForwardXFeet(this.drive, 6.0, 0.8))
+      .whenPressed(new DriveForwardXFeet(this.drive, 6.5, 0.8))
       ;
   
     //  Turns the robot left or right 45 degrees ( +degrees is left, -degrees is right)

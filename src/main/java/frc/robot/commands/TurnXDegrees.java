@@ -56,6 +56,7 @@ public class TurnXDegrees extends CommandBase {
     this.destX = this.initX + this.degrees_to_turn;
     // System.out.println("Destination X: " + this.destX);
     SmartDashboard.putNumber("Target Turn Angle", this.destX);
+    System.out.println("Turning");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -74,7 +75,7 @@ public class TurnXDegrees extends CommandBase {
     //                        v---^^^^------------------------------------------------------v
     double speedLimiter = 1 - Math.abs((this.currX - this.initX) / (this.destX - this.initX));
     double actualSpeed = (this.initSpeed * (speedLimiter)) + 0.5;
-    System.out.println(actualSpeed);
+    // System.out.println(actualSpeed);
 
     SmartDashboard.putNumber("Current Turn Angle",this.currX);
 

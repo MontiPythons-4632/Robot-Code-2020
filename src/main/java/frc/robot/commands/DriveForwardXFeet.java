@@ -16,15 +16,14 @@ public class DriveForwardXFeet extends CommandBase {
    */
   private final Drive m_drive;
 
-  double distanceToTravelInFeet;
+  double feetToTravel;
   double speed;
   double startDistance;
 
   public DriveForwardXFeet(Drive subsystem, double xFeet, double speed) {
     this.m_drive = subsystem;
-    this.distanceToTravelInFeet = xFeet;
+    this.feetToTravel = xFeet;
     this.speed = speed;
-    this.startDistance = this.m_drive.getDistanceTraveled();
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -33,13 +32,14 @@ public class DriveForwardXFeet extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // withTimeout(0.5 * distanceToTravelInFeet); // 0.5 seconds per foot
+    // withTimeout(0.5 * feetToTravel); // 0.5 seconds per foot
+    this.startDistance = this.m_drive.getDistanceTraveled();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("Driving Forwrd%");
+    System.out.println("Driving Forward");
 
     m_drive.arcade(this.speed, 0);
   }
@@ -53,10 +53,9 @@ public class DriveForwardXFeet extends CommandBase {
   @Override
   public boolean isFinished() {
 
-    if ( (this.m_drive.getDistanceTraveled() - this.startDistance) >= (this.distanceToTravelInFeet * 12) ) {
+    if ( Math.abs(this.m_drive.getDistanceTraveled() - this.startDistance) >= Math.abs(this.feetToTravel * 12) ) {
         return true;
     }
-
     return false;
   }
 }

@@ -30,9 +30,17 @@ public class TestSequentialCommandGroup extends SequentialCommandGroup {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
 
+
+    //  (!) This code is not working, instead, edit the inline command in RobotContainer
     super(
-      new TurnXDegrees(drive, -45),
-      new DriveForwardXFeet(drive, 6.0, 0.8)
+      new DriveForwardXFeet(drive, 3.0, 0.6),
+      new TurnXDegrees(drive, -90),
+      new DriveForwardXFeet(drive, 3.0, 0.6),
+      new TurnXDegrees(drive, -90),
+      new DriveForwardXFeet(drive, 3.0, 0.6),
+      new TurnXDegrees(drive, -90),
+      new DriveForwardXFeet(drive, 3.0, 0.6),
+      new TurnXDegrees(drive, -90)
       );
   }
 }
