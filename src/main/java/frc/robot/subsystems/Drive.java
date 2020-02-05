@@ -23,7 +23,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import frc.robot.Constants.DriveConstants;
 
 public class Drive extends SubsystemBase {
-  //Creates a new Drive.
+  // Creates a new Drive.
 
   private WPI_TalonSRX leftFront;
   private WPI_VictorSPX leftBack;
@@ -34,7 +34,7 @@ public class Drive extends SubsystemBase {
   private DifferentialDrive differentialDrive;
   private double speedLimit;
 
-  private boolean aimingMode;
+  private double driveInvert = 1.0;
   private Encoder leftEncoder;
   private Encoder rightEncoder;
   private double leftDistanceTraveled;
@@ -47,27 +47,25 @@ public class Drive extends SubsystemBase {
   private double curZ;
   private double curCompass;
 
-
   // Move this to constants%
-  private static final double cpr = 214; //if am-3314a
+  private static final double cpr = 214; // if am-3314a
   private static final double whd = 6; // for 6 inch wheel
-
 
   public Drive() {
     leftFront = new WPI_TalonSRX(1);
     leftBack = new WPI_VictorSPX(2);
     left = new SpeedControllerGroup(leftFront, leftBack);
-    left.setInverted(this.aimingMode);
-    addChild("Left",left);
-    
+    left.setInverted(false);
+    addChild("Left", left);
+
     rightFront = new WPI_TalonSRX(3);
     rightBack = new WPI_VictorSPX(4);
     right = new SpeedControllerGroup(rightFront, rightBack);
-    right.setInverted(this.aimingMode);
-    addChild("Right",right);
-    
+    right.setInverted(false);
+    addChild("Right", right);
+
     differentialDrive = new DifferentialDrive(left, right);
-    addChild("Differential Drive",differentialDrive);
+    addChild("Differential Drive", differentialDrive);
     differentialDrive.setSafetyEnabled(false);
     differentialDrive.setExpiration(0.3);
     differentialDrive.setMaxOutput(1.0);
@@ -80,22 +78,24 @@ public class Drive extends SubsystemBase {
     leftFront.configFactoryDefault();
     leftBack.configFactoryDefault();
 
-    //[4] adjust sensor phase so sensor moves positive when Talon LEDs are green
+    // [4] adjust sensor phase so sensor moves positive when Talon LEDs are green
     rightFront.setSensorPhase(true);
     leftFront.setSensorPhase(true);
     rightBack.setSensorPhase(true);
     leftBack.setSensorPhase(true);
 
     // Set up encoder
-    leftEncoder = new Encoder(6,7);
+    leftEncoder = new Encoder(6, 7);
     leftEncoder.reset();
-    leftEncoder.setDistancePerPulse(Math.PI*whd/cpr); //distance per pulse is pi* (wheel diameter / counts per revolution)
-    leftEncoder.setReverseDirection(!this.aimingMode);
+    leftEncoder.setDistancePerPulse(Math.PI * whd / cpr); // distance per pulse is pi* (wheel diameter / counts per
+                                                          // revolution)
+    leftEncoder.setReverseDirection(true);
 
-    rightEncoder = new Encoder(8,9);
+    rightEncoder = new Encoder(8, 9);
     rightEncoder.reset();
-    rightEncoder.setDistancePerPulse(Math.PI*whd/cpr); //distance per pulse is pi* (wheel diameter / counts per revolution)
-    rightEncoder.setReverseDirection(this.aimingMode);
+    rightEncoder.setDistancePerPulse(Math.PI * whd / cpr); // distance per pulse is pi* (wheel diameter / counts per
+                                                           // revolution)
+    rightEncoder.setReverseDirection(false);
 
     // Initialize the Pigeon 9DOF
     pigeon = new PigeonIMU(8);
@@ -105,6 +105,14 @@ public class Drive extends SubsystemBase {
 
     // addChild("AnalogGyro 1",analogGyro1);
     // analogGyro1.setSensitivity(0.007);
+  }
+
+  public double getDriveInvert() {
+    return driveInvert;
+  }
+
+  public void setDriveInvert(double driveInvert) {
+    this.driveInvert = driveInvert;
   }
 
   public void initDefaultCommand() {
@@ -133,27 +141,27 @@ public class Drive extends SubsystemBase {
     this.curY = ypr_deg[1];
     this.curZ = ypr_deg[2];
 
-    SmartDashboard.putNumber("Compass",this.pigeon.getAbsoluteCompassHeading());
+    SmartDashboard.putNumber("Compass", this.pigeon.getAbsoluteCompassHeading());
     SmartDashboard.putNumber("Yaw", this.curX);
     SmartDashboard.putNumber("Pitch", this.curY);
     SmartDashboard.putNumber("Roll", this.curZ);
-    //SmartDashboard.putNumber("X Accelerometer", this.curZ*100);
+    // SmartDashboard.putNumber("X Accelerometer", this.curZ*100);
 
   }
 
   public void arcade(double speed, double direction) {
     /* Takes parameters and sets direction */
-  
+
     // System.out.format("speed=%d--direction=%d", speed, direction);
 
-    this.differentialDrive.arcadeDrive(speed*this.speedLimit, direction*this.speedLimit);
+    this.differentialDrive.arcadeDrive(speed * speedLimit * driveInvert, direction * speedLimit * driveInvert);
   }
 
-  //  Change robot speed limit. Based on buttons 2 and 3 in RobotContainer
+  // Change robot speed limit. Based on buttons 2 and 3 in RobotContainer
   public void setLimitNorm() {
     this.speedLimit = DriveConstants.kDriveNorm;
   }
-  
+
   public void setLimitFast() {
     this.speedLimit = DriveConstants.kDriveFast;
   }
@@ -162,11 +170,19 @@ public class Drive extends SubsystemBase {
     this.speedLimit = DriveConstants.kDriveSlow;
   }
 
-  public void reverseDrive() {
-    this.aimingMode = !this.aimingMode;
+  public void drivingMode() {
+    this.driveInvert = -1.0;
+    System.out.println("Drive is inverted");
   }
 
+  public void aimingMode() {
+    this.driveInvert = 1.0;
+    System.out.println("Drive is not inverted");
+  }
 
+  public double getDriveMode() {
+    return this.driveInvert;
+  }
   //  In the future replace with a getDistLeft() and getDistRight()
   public double getDistanceTraveled() {
     return (this.leftDistanceTraveled + this.rightDistanceTraveled) / 2;

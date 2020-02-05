@@ -62,7 +62,7 @@ public class RobotContainer {
     );
 
     this.beefCake.setDefaultCommand(
-      new RunCommand(() -> beefCake.angleJoystick(beefCakeJoystick.getY()),
+      new RunCommand(() -> beefCake.angleJoystick(beefCakeJoystick.getY()*-0.75),
                            beefCake
                     )
     );
@@ -83,9 +83,10 @@ public class RobotContainer {
        .whenReleased( this.beefCake::feederOff);
 
     //  Change robot speed limit. Based on buttons 2 and 3
-    new JoystickButton(this.driveJoystick, 3)
-      .whenPressed(this.drive::setLimitFast)
-      .whenReleased(this.drive::setLimitNorm);
+    //  Commented out for dodgeball
+    // new JoystickButton(this.driveJoystick, 3)
+    //   .whenPressed(this.drive::setLimitFast)
+    //   .whenReleased(this.drive::setLimitNorm);
     
     new JoystickButton(this.driveJoystick, 2)
       .whenPressed(this.drive::setLimitSlow)
@@ -99,47 +100,52 @@ public class RobotContainer {
       .whenPressed(this.beefCake::launcherOff);   
 
     //  Runs TestSequentialCommandGroup command once
-      new JoystickButton(this.driveJoystick, 6)
-      .whenPressed(
-        new SequentialCommandGroup(
-          new DriveForwardXFeet(drive, 6.5, 0.8), 
-          new TurnXDegrees(drive, 62),
-          new DriveForwardXFeet(drive, 6.5, 0.8), 
-          new TurnXDegrees(drive, 62),
-          new DriveForwardXFeet(drive, 6.5, 0.8), 
-          new TurnXDegrees(drive, 62),
-          new DriveForwardXFeet(drive, 6.5, 0.8), 
-          new TurnXDegrees(drive, 62)
-        )
-      )
-      ;
+    //  Commented out for dodgeball
+      // new JoystickButton(this.driveJoystick, 6)
+      // .whenPressed(
+      //   new SequentialCommandGroup(
+      //     new DriveForwardXFeet(drive, 6.5, 0.8), 
+      //     new TurnXDegrees(drive, 62),
+      //     new DriveForwardXFeet(drive, 6.5, 0.8), 
+      //     new TurnXDegrees(drive, 62),
+      //     new DriveForwardXFeet(drive, 6.5, 0.8), 
+      //     new TurnXDegrees(drive, 62),
+      //     new DriveForwardXFeet(drive, 6.5, 0.8), 
+      //     new TurnXDegrees(drive, 62)
+      //   )
+      // )
+      // ;
 
     //  Runs the DriveForwardXFeet command once
-    new JoystickButton(this.driveJoystick, 7)
-      .whenPressed(new DriveForwardXFeet(this.drive, 6.5, 0.8))
-      ;
+    //  Commented out for dodgeball
+    // new JoystickButton(this.driveJoystick, 7)
+    //   .whenPressed(new DriveForwardXFeet(this.drive, 6.5, 0.8))
+    //   ;
   
     //  Turns the robot left or right 45 degrees ( +degrees is left, -degrees is right)
-    new JoystickButton(this.driveJoystick, 10)
-    .whenPressed(new TurnXDegrees(this.drive, 45.0))
+    new JoystickButton(this.driveJoystick, 4)
+    .whenPressed(new TurnXDegrees(this.drive, 2.0))
     ;
    
-    new JoystickButton(this.driveJoystick, 11)
-    .whenPressed(new TurnXDegrees(this.drive, -45.0))
+    new JoystickButton(this.driveJoystick, 5)
+    .whenPressed(new TurnXDegrees(this.drive, -2.0))
     ;
-   
 
     //  Reverses the drive direction for Shooting vs Intake
-    new JoystickButton(this.driveJoystick, 1)
-      .whenPressed(new InstantCommand(this.drive::reverseDrive, this.drive))
+    new JoystickButton(this.driveJoystick, 8)
+      .whenPressed(new InstantCommand(this.drive::drivingMode, this.drive))
+    ;
+
+    new JoystickButton(this.driveJoystick, 9)
+      .whenPressed(new InstantCommand(this.drive::aimingMode, this.drive))
     ;
 
     //  Angles the launcher with buttons
-    // new JoystickButton(this.beefCakeJoystick, 10)
+    // new JoystickButton(this.beefCakeJoystick, 3)
     //   .whenPressed(this.beefCake::adjustAngleUp)
     //   .whenReleased(this.beefCake::stopAngle);
     
-    // new JoystickButton(this.beefCakeJoystick, 11)
+    // new JoystickButton(this.beefCakeJoystick, 2)
     //   .whenPressed(this.beefCake::adjustAngleDown)
     //   .whenReleased(this.beefCake::stopAngle);
 

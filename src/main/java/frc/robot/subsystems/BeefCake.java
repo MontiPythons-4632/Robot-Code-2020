@@ -24,32 +24,60 @@ public class BeefCake extends SubsystemBase {
   /**
    * Creates a new BeefCake.
    */
-  private final WPI_VictorSPX angleTop;
-  private final WPI_VictorSPX angleBottom;
-  private final Spark launcherLeft;
-  private final Spark launcherRight;
+  // private final WPI_VictorSPX angleTop;
+  // private final WPI_VictorSPX angleBottom;
+  // private final Spark launcherLeft;
+  // private final Spark launcherRight;
+  // private final Spark feed;
+  // private final SpeedControllerGroup angle;
+  // private final SpeedControllerGroup launcher;
+  private final Spark angleMotors;
   private final Spark feed;
-  private final SpeedControllerGroup angle;
+  private final WPI_VictorSPX launcherLeft;
+  private final WPI_VictorSPX launcherRight;
+  private final WPI_VictorSPX intake;
   private final SpeedControllerGroup launcher;
 
   public BeefCake() {
-    angleTop = new WPI_VictorSPX(6);
-    angleBottom = new WPI_VictorSPX(7);
-    angle = new SpeedControllerGroup(angleTop, angleBottom);
+    // angleTop = new WPI_VictorSPX(6);
+    // angleBottom = new WPI_VictorSPX(7);
+    // angle = new SpeedControllerGroup(angleTop, angleBottom);
 
-    launcherLeft = new Spark(1);
-    addChild("Launcher Left", launcherLeft);
-    launcherLeft.setInverted(true);
+    // launcherLeft = new Spark(1);
+    // addChild("Launcher Left", launcherLeft);
+    // launcherLeft.setInverted(true);
 
-    launcherRight = new Spark(2);
-    addChild("Launcher Right", launcherRight);
-    launcherRight.setInverted(false);
+    // launcherRight = new Spark(2);
+    // addChild("Launcher Right", launcherRight);
+    // launcherRight.setInverted(false);
 
-    launcher = new SpeedControllerGroup(launcherRight, launcherLeft);
-    addChild("Launcher", launcher);
+    // launcher = new SpeedControllerGroup(launcherRight, launcherLeft);
+    // addChild("Launcher", launcher);
+
+    // feed = new Spark(0);
+    // addChild("Feed", feed);
+
+    angleMotors = new Spark(1);
+    addChild("angleMotors", angleMotors);
 
     feed = new Spark(0);
-    addChild("Feed", feed);
+    addChild("tower", feed);
+    feed.setInverted(true);
+
+    launcherLeft = new WPI_VictorSPX(5);
+    addChild("Launcher Right", launcherLeft);
+    launcherLeft.setInverted(false);
+
+    launcherRight = new WPI_VictorSPX(6);
+    addChild("Launcher Right", launcherRight);
+    launcherRight.setInverted(true);
+
+    launcher = new SpeedControllerGroup(launcherLeft, launcherRight);
+    addChild("Launcher", launcher);
+
+    intake = new WPI_VictorSPX(7);
+    addChild("Intake", intake);
+    intake.setInverted(true);
   }
 
   @Override
@@ -111,30 +139,32 @@ public class BeefCake extends SubsystemBase {
 
     launcher.stopMotor();
   }
+  
+  // public void adjustAngleUp() {
 
   //   if ( BeefCakeConstants.DEBUG ) {
-  //     System.out.println("adjustAngleUp is active");
+  //     System.out.println("Adjusting angle up");
   //   }
 
-  //   angle.set(BeefCakeConstants.kAngleSpeed);
+  //   angleMotors.set(BeefCakeConstants.kAngleSpeed*0.6);
   // }
 
   // public void adjustAngleDown() {
 
   //   if ( BeefCakeConstants.DEBUG ) {
-  //     System.out.println("adjustAngleDown is active");
+  //     System.out.println("Adjusting angle down");
   //   }
 
-  //   angle.set(BeefCakeConstants.kAngleSpeed * -1.0);
+  //   angleMotors.set(BeefCakeConstants.kAngleSpeed * -1.0);
   // }
 
   // public void stopAngle() {
-  //   angle.stopMotor();
+  //   angleMotors.stopMotor();
   // }
 
   //  Adjusts the launcher Up and Down (using the angle of the co-pilot joystick)
   public void angleJoystick(double speed) {
-    angle.set(speed);
+    angleMotors.set(speed);
   }
 
   //  Turns the intake on and off
@@ -143,7 +173,7 @@ public class BeefCake extends SubsystemBase {
       System.out.println("intake is active");
     }
 
-    // feed.setSpeed(BeefCakeConstants.kFeederSpeed);
+    intake.set(BeefCakeConstants.kIntake);
   }
 
   public void intakeOff() {
@@ -151,7 +181,7 @@ public class BeefCake extends SubsystemBase {
       System.out.println("intake is not active");
     }
 
-    // feed.setSpeed(BeefCakeConstants.kFeederSpeed);
+    intake.stopMotor();
   }
 
 }
