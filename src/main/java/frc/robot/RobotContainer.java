@@ -83,10 +83,9 @@ public class RobotContainer {
        .whenReleased( this.beefCake::feederOff);
 
     //  Change robot speed limit. Based on buttons 2 and 3
-    //  Commented out for dodgeball
-    // new JoystickButton(this.driveJoystick, 3)
-    //   .whenPressed(this.drive::setLimitFast)
-    //   .whenReleased(this.drive::setLimitNorm);
+    new JoystickButton(this.driveJoystick, 3)
+      .whenPressed(this.drive::setLimitFast)
+      .whenReleased(this.drive::setLimitNorm);
     
     new JoystickButton(this.driveJoystick, 2)
       .whenPressed(this.drive::setLimitSlow)
@@ -100,27 +99,25 @@ public class RobotContainer {
       .whenPressed(this.beefCake::launcherOff);   
 
     //  Runs TestSequentialCommandGroup command once
-    //  Commented out for dodgeball
-      // new JoystickButton(this.driveJoystick, 6)
-      // .whenPressed(
-      //   new SequentialCommandGroup(
-      //     new DriveForwardXFeet(drive, 6.5, 0.8), 
-      //     new TurnXDegrees(drive, 62),
-      //     new DriveForwardXFeet(drive, 6.5, 0.8), 
-      //     new TurnXDegrees(drive, 62),
-      //     new DriveForwardXFeet(drive, 6.5, 0.8), 
-      //     new TurnXDegrees(drive, 62),
-      //     new DriveForwardXFeet(drive, 6.5, 0.8), 
-      //     new TurnXDegrees(drive, 62)
-      //   )
-      // )
-      // ;
+      new JoystickButton(this.driveJoystick, 6)
+      .whenPressed(
+        new SequentialCommandGroup(
+          new DriveForwardXFeet(drive, 6.5, 0.8), 
+          new TurnXDegrees(drive, 62),
+          new DriveForwardXFeet(drive, 6.5, 0.8), 
+          new TurnXDegrees(drive, 62),
+          new DriveForwardXFeet(drive, 6.5, 0.8), 
+          new TurnXDegrees(drive, 62),
+          new DriveForwardXFeet(drive, 6.5, 0.8), 
+          new TurnXDegrees(drive, 62)
+        )
+      )
+      ;
 
     //  Runs the DriveForwardXFeet command once
-    //  Commented out for dodgeball
-    // new JoystickButton(this.driveJoystick, 7)
-    //   .whenPressed(new DriveForwardXFeet(this.drive, 6.5, 0.8))
-    //   ;
+    new JoystickButton(this.driveJoystick, 7)
+      .whenPressed(new DriveForwardXFeet(this.drive, 6.5, 0.8))
+      ;
   
     //  Turns the robot left or right 45 degrees ( +degrees is left, -degrees is right)
     new JoystickButton(this.driveJoystick, 4)
@@ -153,7 +150,13 @@ public class RobotContainer {
     new JoystickButton(this.driveJoystick, 1)
       .whenPressed(this.beefCake::intakeOn)
       .whenReleased(this.beefCake::intakeOff);
+    ;
+          
 
+    new JoystickButton(this.driveJoystick, 7)
+      .whenPressed(this.beefCake::intakeReverse)
+      .whenReleased(this.beefCake::intakeOff);
+    ;
     }      
     
   /**

@@ -176,6 +176,15 @@ public class BeefCake extends SubsystemBase {
     intake.set(BeefCakeConstants.kIntake);
   }
 
+  public void intakeReverse() {
+    if ( BeefCakeConstants.DEBUG ) {
+      System.out.println("intake is active");
+    }
+
+    intake.set(-1.0*BeefCakeConstants.kIntake);
+  }
+
+
   public void intakeOff() {
     if ( BeefCakeConstants.DEBUG ) {
       System.out.println("intake is not active");
