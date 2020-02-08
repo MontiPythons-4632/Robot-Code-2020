@@ -14,6 +14,7 @@ import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -42,13 +43,13 @@ public class RobotContainer {
   // The robot's subsystems are defined here...
   private final Drive drive = new Drive();
   private final BeefCake beefCake = new BeefCake();
+  private final ColorWheel colorWheel = new ColorWheel();
 
   // The robot's commands are defined here...
-  private BeefCakeJoystickAngle beefCakeJoystickAngle = new BeefCakeJoystickAngle(beefCake, beefCakeJoystick);
-  private final DriveForwardXFeet driveXFeet = new DriveForwardXFeet(drive, 10.0, 0.5);
-  private final DriveJoystick driveJoystickCommand = new DriveJoystick(drive, driveJoystick);
-
-  private StartBeefCakeFeed startBeefCakeFeed = new StartBeefCakeFeed(beefCake);
+  // private BeefCakeJoystickAngle beefCakeJoystickAngle = new BeefCakeJoystickAngle(beefCake, beefCakeJoystick);
+  // private final DriveForwardXFeet driveXFeet = new DriveForwardXFeet(drive, 10.0, 0.5);
+  // private final DriveJoystick driveJoystickCommand = new DriveJoystick(drive, driveJoystick);
+  // private StartBeefCakeFeed startBeefCakeFeed = new StartBeefCakeFeed(beefCake);
 
   // The container for the robot.  Contains subsystems, OI devices, and commands.
   public RobotContainer() {
@@ -77,29 +78,98 @@ public class RobotContainer {
   private void configureButtonBindings() {  
     System.out.println("Setting Bindings");
 
+    /*-------------/ BEEFCAKE /-------------*/
+
     //  Activate/Deactivate the feeder
     new JoystickButton(this.beefCakeJoystick, 1)
-       .whenPressed(new InstantCommand(this.beefCake::feederOn, this.beefCake))
-       .whenReleased( this.beefCake::feederOff);
+      .whenPressed(new InstantCommand(this.beefCake::feederOn, this.beefCake))
+      .whenReleased( this.beefCake::feederOff)
+    ;
 
-    //  Change robot speed limit. Based on buttons 2 and 3
-    new JoystickButton(this.driveJoystick, 3)
-      .whenPressed(this.drive::setLimitFast)
-      .whenReleased(this.drive::setLimitNorm);
+    //  Angles the launcher with buttons
+    // new JoystickButton(this.beefCakeJoystick, 3)
+    //   .whenPressed(this.beefCake::adjustAngleDown)
+    //   .whenReleased(this.beefCake::stopAngle)
+    // ;
     
-    new JoystickButton(this.driveJoystick, 2)
-      .whenPressed(this.drive::setLimitSlow)
-      .whenReleased(this.drive::setLimitNorm);
+    // new JoystickButton(this.beefCakeJoystick, 2)
+    //   .whenPressed(this.beefCake::adjustAngleUp)
+    //   .whenReleased(this.beefCake::stopAngle)
+    // ;
 
     //  Activate/Deactivate the launcher wheels
     new JoystickButton(this.beefCakeJoystick, 6)
-      .whenPressed(this.beefCake::launcherOn);
+      .whenPressed(this.beefCake::launcherOn)
+    ;
 
     new JoystickButton(this.beefCakeJoystick, 7)
-      .whenPressed(this.beefCake::launcherOff);   
+      .whenPressed(this.beefCake::launcherOff)
+    ;
+    
+    new JoystickButton(this.beefCakeJoystick, 8)
+      .whenPressed(this.beefCake::climbUp)
+      .whenReleased(this.beefCake::climbOff);
+
+    new JoystickButton(this.beefCakeJoystick, 9)
+      .whenPressed(this.beefCake::climbDown)
+      .whenReleased(this.beefCake::climbOff);
+
+    /*-------------/ DRIVE /-------------*/
+
+    // Control the intake
+    new JoystickButton(this.driveJoystick, 1)
+      .whenPressed(this.beefCake::intakeOn)
+      .whenReleased(this.beefCake::intakeOff);
+    ;
+
+    //  Change robot speed
+    new JoystickButton(this.driveJoystick, 2)
+      .whenPressed(this.drive::setLimitSlow)
+      .whenReleased(this.drive::setLimitNorm)
+    ;
+
+    new JoystickButton(this.driveJoystick, 3)
+      .whenPressed(this.drive::setLimitFast)
+      .whenReleased(this.drive::setLimitNorm)
+    ;
+    
+    //  Turns the robot left or right 45 degrees ( +degrees is left, -degrees is right)
+    new JoystickButton(this.driveJoystick, 4)
+      .whenPressed(new TurnXDegrees(this.drive, 25.0))
+    ;
+   
+    new JoystickButton(this.driveJoystick, 5)
+      .whenPressed(new TurnXDegrees(this.drive, -25.0))
+    ;
+  
+    //  Reverses the Intake in case of a stuck ball
+    new JoystickButton(this.driveJoystick, 7)
+      .whenPressed(this.beefCake::intakeReverse)
+      .whenReleased(this.beefCake::intakeOff);
+    ;
+
+    //  Changes the drive direction for Intake and Aiming
+    new JoystickButton(this.driveJoystick, 8)
+      .whenPressed(new InstantCommand(this.drive::setIntakeMode, this.drive))
+    ;
+
+    new JoystickButton(this.driveJoystick, 9)
+      .whenPressed(new InstantCommand(this.drive::setAimingMode, this.drive))
+    ;
+
+    //  Runs the DriveForwardXFeet command once
+    // new JoystickButton(this.driveJoystick, 10)
+    //   .whenPressed(new DriveForwardXFeet(this.drive, 6.5, 0.8))
+    // ;
+
+    //  Runs the LimeLightAlign command
+    new JoystickButton(this.driveJoystick, 10)
+      .whenPressed(new AutoShoot(this.beefCake, this.drive) 
+      )
+    ;
 
     //  Runs TestSequentialCommandGroup command once
-      new JoystickButton(this.driveJoystick, 6)
+    new JoystickButton(this.driveJoystick, 11)
       .whenPressed(
         new SequentialCommandGroup(
           new DriveForwardXFeet(drive, 6.5, 0.8), 
@@ -112,61 +182,17 @@ public class RobotContainer {
           new TurnXDegrees(drive, 62)
         )
       )
-      ;
-
-    //  Runs the DriveForwardXFeet command once
-    new JoystickButton(this.driveJoystick, 7)
-      .whenPressed(new DriveForwardXFeet(this.drive, 6.5, 0.8))
-      ;
+    ;
+  }
+    
+  //  Use this to pass the autonomous command to the main {@link Robot} class.
+  //  @return the command to run in autonomous
   
-    //  Turns the robot left or right 45 degrees ( +degrees is left, -degrees is right)
-    new JoystickButton(this.driveJoystick, 4)
-    .whenPressed(new TurnXDegrees(this.drive, 2.0))
-    ;
-   
-    new JoystickButton(this.driveJoystick, 5)
-    .whenPressed(new TurnXDegrees(this.drive, -2.0))
-    ;
-
-    //  Reverses the drive direction for Shooting vs Intake
-    new JoystickButton(this.driveJoystick, 8)
-      .whenPressed(new InstantCommand(this.drive::drivingMode, this.drive))
-    ;
-
-    new JoystickButton(this.driveJoystick, 9)
-      .whenPressed(new InstantCommand(this.drive::aimingMode, this.drive))
-    ;
-
-    //  Angles the launcher with buttons
-    // new JoystickButton(this.beefCakeJoystick, 3)
-    //   .whenPressed(this.beefCake::adjustAngleUp)
-    //   .whenReleased(this.beefCake::stopAngle);
-    
-    // new JoystickButton(this.beefCakeJoystick, 2)
-    //   .whenPressed(this.beefCake::adjustAngleDown)
-    //   .whenReleased(this.beefCake::stopAngle);
-
-    // Control the intake
-    new JoystickButton(this.driveJoystick, 1)
-      .whenPressed(this.beefCake::intakeOn)
-      .whenReleased(this.beefCake::intakeOff);
-    ;
-          
-
-    new JoystickButton(this.driveJoystick, 7)
-      .whenPressed(this.beefCake::intakeReverse)
-      .whenReleased(this.beefCake::intakeOff);
-    ;
-    }      
-    
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     System.out.println("getting Autonomous Command");
     return new DriveForwardXFeet(this.drive, 2.0, 0.8);
+
+    
   }
 }

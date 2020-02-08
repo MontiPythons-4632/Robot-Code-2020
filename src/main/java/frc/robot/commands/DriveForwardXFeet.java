@@ -32,7 +32,6 @@ public class DriveForwardXFeet extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // withTimeout(0.5 * feetToTravel); // 0.5 seconds per foot
     this.startDistance = this.m_drive.getDistanceTraveled();
   }
 

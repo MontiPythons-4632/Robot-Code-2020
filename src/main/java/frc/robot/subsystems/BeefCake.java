@@ -24,45 +24,32 @@ public class BeefCake extends SubsystemBase {
   /**
    * Creates a new BeefCake.
    */
-  // private final WPI_VictorSPX angleTop;
-  // private final WPI_VictorSPX angleBottom;
-  // private final Spark launcherLeft;
-  // private final Spark launcherRight;
-  // private final Spark feed;
-  // private final SpeedControllerGroup angle;
-  // private final SpeedControllerGroup launcher;
   private final Spark angleMotors;
   private final Spark feed;
+  private final Spark climber1;
+  private final Spark climber2;
+  private final SpeedControllerGroup climber;
   private final WPI_VictorSPX launcherLeft;
   private final WPI_VictorSPX launcherRight;
   private final WPI_VictorSPX intake;
   private final SpeedControllerGroup launcher;
 
   public BeefCake() {
-    // angleTop = new WPI_VictorSPX(6);
-    // angleBottom = new WPI_VictorSPX(7);
-    // angle = new SpeedControllerGroup(angleTop, angleBottom);
-
-    // launcherLeft = new Spark(1);
-    // addChild("Launcher Left", launcherLeft);
-    // launcherLeft.setInverted(true);
-
-    // launcherRight = new Spark(2);
-    // addChild("Launcher Right", launcherRight);
-    // launcherRight.setInverted(false);
-
-    // launcher = new SpeedControllerGroup(launcherRight, launcherLeft);
-    // addChild("Launcher", launcher);
-
-    // feed = new Spark(0);
-    // addChild("Feed", feed);
-
-    angleMotors = new Spark(1);
+    angleMotors = new Spark(2);
     addChild("angleMotors", angleMotors);
 
-    feed = new Spark(0);
+    feed = new Spark(1);
     addChild("tower", feed);
     feed.setInverted(true);
+
+    climber1 = new Spark(0);
+    feed.setInverted(false);
+
+    climber2 = new Spark(3);
+    feed.setInverted(true);
+
+    climber = new SpeedControllerGroup(climber1, climber2);
+    addChild("Climber", climber);
 
     launcherLeft = new WPI_VictorSPX(5);
     addChild("Launcher Right", launcherLeft);
@@ -193,4 +180,27 @@ public class BeefCake extends SubsystemBase {
     intake.stopMotor();
   }
 
+  public void climbUp() {
+    if ( BeefCakeConstants.DEBUG ) {
+      System.out.println("climber is active");
+    }
+
+    climber.set(0.9);
+  }
+
+  public void climbDown() {
+    if ( BeefCakeConstants.DEBUG ) {
+      System.out.println("climber is active");
+    }
+
+    climber.set(-0.9);
+  }
+
+  public void climbOff() {
+    if ( BeefCakeConstants.DEBUG ) {
+      System.out.println("climber is active");
+    }
+
+    climber.stopMotor();
+  }
 }

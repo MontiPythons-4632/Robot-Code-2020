@@ -71,19 +71,13 @@ public class TurnXDegrees extends CommandBase {
             direction = -1;
     }
 
-    // As currX approaches destX, THIS goes from 0 to 1, speedLimiter goes from 1 to 0
-    //                        v---^^^^------------------------------------------------------v
-    double speedLimiter = 1 - Math.abs((this.currX - this.initX) / (this.destX - this.initX));
-    double actualSpeed = (this.initSpeed * (speedLimiter)) + 0.5;
-    // System.out.println(actualSpeed);
+    // As currX approaches destX, THIS goes from 0 to 1, acutalSpeed goes from 1 to 0.5
+    //                            v---^^^^---------------------------------------------- -----------v
+    double actualSpeed = Math.max(1 - Math.abs((this.currX - this.initX) / (this.destX - this.initX)) , 0.5);
 
     SmartDashboard.putNumber("Current Turn Angle",this.currX);
 
     this.driveSubsystem.arcade(0, direction*actualSpeed);
-
-    // if( Math.abs(this.currX - this.destX) < 10 ) {
-    //   speedLimit = DriveConstants.kDriveSlow;
-    // }
   }
 
   // Called once the command ends or is interrupted.
