@@ -63,6 +63,8 @@ public class LimeLightAlign extends CommandBase {
     this.actualSpeed = Math.min(0.5 + Math.abs(this.currXOffset / 5 * 0.05), this.initSpeed);
 
     this.driveSubsystem.arcade(0, direction*this.actualSpeed);
+
+    SmartDashboard.putString("Mode", "Ready!");
   }
 
   // Called once the command ends or is interrupted.
