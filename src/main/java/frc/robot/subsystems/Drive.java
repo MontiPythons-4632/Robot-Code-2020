@@ -16,6 +16,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import frc.robot.Constants.DriveConstants;
@@ -54,6 +58,9 @@ public class Drive extends SubsystemBase {
   //  Limelight variables
   private double targetAquired;
   private double horizontalOffset;
+
+  // Odometry class for tracking robot pose
+  private DifferentialDriveOdometry odometry;
 
   public Drive() {
     leftFront = new WPI_TalonSRX(1);
@@ -150,6 +157,13 @@ public class Drive extends SubsystemBase {
     // SmartDashboard.putNumber("Roll", this.curZ);
     // SmartDashboard.putNumber("X Accelerometer", this.curZ*100);
 
+    // Update the odometry in the periodic block
+    odometry.update(Rotation2d.fromDegrees(this.getHeading()), 
+                                           leftEncoder.getDistance(),
+                                           rightEncoder.getDistance()
+                    );
+
+
     this.targetAquired = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
     this.horizontalOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
   }
@@ -203,6 +217,74 @@ public class Drive extends SubsystemBase {
       return this.curX;
 
   }
+
+   /**
+   * Returns the heading of the robot.
+   *
+   * @return the robot's heading in degrees, from -180 to 180
+   */
+  public double getHeading() {
+    return Math.IEEEremainder(this.curX, 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  }
+
+    /**
+   * Returns the currently-estimated pose of the robot.
+   *
+   * @return The pose.
+   */
+  public Pose2d getPose() {
+    return this.odometry.getPoseMeters();
+  }
+
+  /**
+   * Returns the current wheel speeds of the robot.
+   *
+   * @return The current wheel speeds.
+   */
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(this.leftEncoder.getRate(), this.rightEncoder.getRate());
+  }
+
+  /**
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
+  public void resetOdometry(Pose2d pose) {
+    resetEncoders();
+    this.odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
+  }
+
+    /**
+   * Resets the drive encoders to currently read a position of 0.
+   */
+  public void resetEncoders() {
+    this.leftEncoder.reset();
+    this.rightEncoder.reset();
+  }
+
+  /**
+   * Gets the average distance of the two encoders.
+   *
+   * @return the average of the two encoder readings
+   */
+  public double getAverageEncoderDistance() {
+    return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2.0;
+  }
+
+  /**
+   * Controls the left and right sides of the drive directly with voltages.
+   *
+   * @param leftVolts  the commanded left output
+   * @param rightVolts the commanded right output
+   */
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
+    this.left.setVoltage(leftVolts);
+    this.right.setVoltage(-rightVolts);
+    this.differentialDrive.feed();
+  }
+
+
 
   // public void limeLightAlign() {
   //   this.setAimingMode();

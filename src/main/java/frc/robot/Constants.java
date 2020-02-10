@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -17,7 +19,7 @@ package frc.robot;
  */
 public final class Constants {
     // Constants for Drive Subsystem
-    public final class DriveConstants {
+    public final static class DriveConstants {
 
         public static final boolean DEBUG = false;
 
@@ -29,7 +31,26 @@ public final class Constants {
         public static final double kTurnFast = 0.6;
 
         public static final double cpr = 214; // if am-3314a
-        public static final double whd = 6; // for 6 inch wheel      
+        public static final double whd = 6; // for 6 inch wheel
+
+        public static final boolean kGyroReversed = false;
+
+        // These all need to be identified
+        public static final double ksVolts = 7.0;
+        public static final double kvVoltSecondsPerMeter = 5.0;
+        public static final double kaVoltSecondsSquaredPerMeter = 25.0;
+        public static final double kMaxSpeedMetersPerSecond = 3;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+        public static final double kTrackwidthMeters = 0.69;
+        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
+                kTrackwidthMeters);
+
+        // Reasonable baseline values for a RAMSETE follower in units of meters and
+        // seconds
+
+        public static final double kRamseteB = 2;
+
+        public static final double kRamseteZeta = 0.7;
     }
 
     // Constants for BeefCake Subsystem
@@ -43,4 +64,5 @@ public final class Constants {
 
         public static final double kIntake = 0.5;
     }
+
 }
