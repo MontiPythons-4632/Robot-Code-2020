@@ -18,50 +18,65 @@ import javax.swing.text.DefaultEditorKit.BeepAction;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
-import frc.robot.Constants.BeefCakeConstants;
+import frc.robot.Constants.*;
 
 public class BeefCake extends SubsystemBase {
   /**
    * Creates a new BeefCake.
    */
-  private final WPI_VictorSPX angleTop;
-  private final WPI_VictorSPX angleBottom;
-  private final Spark launcherLeft;
-  private final Spark launcherRight;
+  private final Spark angleMotors;
   private final Spark feed;
-  private final SpeedControllerGroup angle;
+  private final Spark climber1;
+  private final Spark climber2;
+  private final SpeedControllerGroup climber;
+  private final WPI_VictorSPX launcherLeft;
+  private final WPI_VictorSPX launcherRight;
+  private final WPI_VictorSPX intake;
   private final SpeedControllerGroup launcher;
 
   public BeefCake() {
-    angleTop = new WPI_VictorSPX(6);
-    angleBottom = new WPI_VictorSPX(7);
-    angle = new SpeedControllerGroup(angleTop, angleBottom);
+    angleMotors = new Spark(2);
+    addChild("angleMotors", angleMotors);
 
-    launcherLeft = new Spark(1);
-    addChild("Launcher Left", launcherLeft);
-    launcherLeft.setInverted(true);
+    feed = new Spark(1);
+    addChild("tower", feed);
+    feed.setInverted(true);
 
-    launcherRight = new Spark(2);
+    climber1 = new Spark(0);
+    feed.setInverted(false);
+
+    climber2 = new Spark(3);
+    feed.setInverted(true);
+
+    climber = new SpeedControllerGroup(climber1, climber2);
+    addChild("Climber", climber);
+
+    launcherLeft = new WPI_VictorSPX(5);
+    addChild("Launcher Right", launcherLeft);
+    launcherLeft.setInverted(false);
+
+    launcherRight = new WPI_VictorSPX(6);
     addChild("Launcher Right", launcherRight);
-    launcherRight.setInverted(false);
+    launcherRight.setInverted(true);
 
-    launcher = new SpeedControllerGroup(launcherRight, launcherLeft);
+    launcher = new SpeedControllerGroup(launcherLeft, launcherRight);
     addChild("Launcher", launcher);
 
-    feed = new Spark(0);
-    addChild("Feed", feed);
+    intake = new WPI_VictorSPX(7);
+    addChild("Intake", intake);
+    intake.setInverted(true);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
   }
 
+  //  Turns the feeder On and Off
   public void feederOn() {
 
     if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("feederOn is active");
+      System.out.println("Feeder is active");
     }
 
     feed.setSpeed(BeefCakeConstants.kFeederSpeed);
@@ -70,22 +85,31 @@ public class BeefCake extends SubsystemBase {
   public void feederOff() {
 
     if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("feederOff is active");
+      System.out.println("Feeder is not active");
     }
 
     feed.stopMotor();
   }
 
- 
-  public boolean isFeederOn() {
+  // public boolean isFeederOn() {
 
-    if ( this.feed.getSpeed() > 0.0 ) {
-        return true;
-    } else {
-        return false;
-    }
-  }
+  //   if ( this.feed.getSpeed() > 0.0 ) {
+  //       return true;
+  //   } else {
+  //       return false;
+  //   }
+  // }
 
+  // public BooleanSupplier isLauncherOn() {
+
+  //   if ( this.feed.getSpeed() > 0.0 ) {
+  //       return () -> true;
+  //   } else {
+  //       return () -> false;
+  //   }
+  // }
+
+  //  Turns the launcher wheels On and Off
   public void launcherOn() {
     if ( BeefCakeConstants.DEBUG ) {
       System.out.println("launcherOn is active");
@@ -102,47 +126,81 @@ public class BeefCake extends SubsystemBase {
 
     launcher.stopMotor();
   }
+  
+  // public void adjustAngleUp() {
 
-  public BooleanSupplier isLauncherOn() {
+  //   if ( BeefCakeConstants.DEBUG ) {
+  //     System.out.println("Adjusting angle up");
+  //   }
 
-    
-    if ( this.feed.getSpeed() > 0.0 ) {
-        return () -> true;
-    } else {
-        return () -> false;
-    }
-  }
+  //   angleMotors.set(BeefCakeConstants.kAngleSpeed*0.6);
+  // }
 
-  public BooleanSupplier isLauncherAtSpeed() {
-    return this.isLauncherOn();
-   
-  }
+  // public void adjustAngleDown() {
 
-  public void adjustAngleUp() {
+  //   if ( BeefCakeConstants.DEBUG ) {
+  //     System.out.println("Adjusting angle down");
+  //   }
 
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("adjustAngleUp is active");
-    }
+  //   angleMotors.set(BeefCakeConstants.kAngleSpeed * -1.0);
+  // }
 
-    angle.set(BeefCakeConstants.kAngleSpeed);
-  }
+  // public void stopAngle() {
+  //   angleMotors.stopMotor();
+  // }
 
-  public void adjustAngleDown() {
-
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("adjustAngleDown is active");
-    }
-
-    angle.set(BeefCakeConstants.kAngleSpeed * -1.0);
-  }
-
-  public void stopAngle() {
-    angle.stopMotor();
-  }
-
+  //  Adjusts the launcher Up and Down (using the angle of the co-pilot joystick)
   public void angleJoystick(double speed) {
-    angle.set(speed);
+    angleMotors.set(speed);
+  }
+
+  //  Turns the intake on and off
+  public void intakeOn() {
+    if ( BeefCakeConstants.DEBUG ) {
+      System.out.println("intake is active");
+    }
+
+    intake.set(BeefCakeConstants.kIntake);
+  }
+
+  public void intakeReverse() {
+    if ( BeefCakeConstants.DEBUG ) {
+      System.out.println("intake is active");
+    }
+
+    intake.set(-1.0*BeefCakeConstants.kIntake);
   }
 
 
+  public void intakeOff() {
+    if ( BeefCakeConstants.DEBUG ) {
+      System.out.println("intake is not active");
+    }
+
+    intake.stopMotor();
+  }
+
+  public void climbUp() {
+    if ( BeefCakeConstants.DEBUG ) {
+      System.out.println("climber is active");
+    }
+
+    climber.set(0.9);
+  }
+
+  public void climbDown() {
+    if ( BeefCakeConstants.DEBUG ) {
+      System.out.println("climber is active");
+    }
+
+    climber.set(-0.9);
+  }
+
+  public void climbOff() {
+    if ( BeefCakeConstants.DEBUG ) {
+      System.out.println("climber is active");
+    }
+
+    climber.stopMotor();
+  }
 }
