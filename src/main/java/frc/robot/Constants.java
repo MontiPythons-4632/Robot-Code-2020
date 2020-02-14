@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import com.revrobotics.ColorMatch;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -20,7 +21,7 @@ import edu.wpi.first.wpilibj.util.Color;
  */
 public final class Constants {
     // Constants for Drive Subsystem
-    public final class DriveConstants {
+    public final static class DriveConstants {
 
         public static final boolean DEBUG = false;
 
@@ -33,6 +34,22 @@ public final class Constants {
 
         public static final double cpr = 214; // if am-3314a
         public static final double whd = 6; // for 6 inch wheel
+
+        public static final boolean kGyroReversed = false;
+
+        // These all need to be identified
+        public static final double ksVolts = 0.974;
+        public static final double kvVoltSecondsPerMeter = 2.57;
+        public static final double kaVoltSecondsSquaredPerMeter = 0.402;
+        public static final double kMaxSpeedMetersPerSecond = 1.5;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
+        public static final double kTrackwidthMeters = 0.874;
+        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
+
+        // Reasonable baseline values for a RAMSETE follower in units of meters and
+        // seconds
+        public static final double kRamseteB = 2;
+        public static final double kRamseteZeta = 0.7;
         
         // For Limelight Distance calculations
         public static final double kCameraAngle = 32.77;
@@ -57,5 +74,9 @@ public final class Constants {
         public static final Color kGreenTarget = ColorMatch.makeColor(0.22, 0.52, 0.25);
         public static final Color kRedTarget = ColorMatch.makeColor(0.36, 0.43, 0.2);
         public static final Color kYellowTarget = ColorMatch.makeColor(0.3, 0.53, 0.17);
+    }
+
+    public final class AutoDriveConstants{
+        public static final String path = "/home/lvuser/deploy/paths";
     }
 }

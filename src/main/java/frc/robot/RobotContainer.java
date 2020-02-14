@@ -7,14 +7,26 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-// import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -23,7 +35,11 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import static edu.wpi.first.wpilibj.Joystick.ButtonType;
 
 import frc.robot.Constants.*;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Set;
 
 // import edu.wpi.first.wpilibj.Joystick;
@@ -67,6 +83,7 @@ public class RobotContainer {
                            beefCake
                     )
     );
+
   }
 
   /**
@@ -191,8 +208,48 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     System.out.println("getting Autonomous Command");
-    return new DriveForwardXFeet(this.drive, 2.0, 0.8);
+    return createPathCommand();
 
     
+  }
+
+  private Command createPathCommand() {
+
+    // use this to setup up definition for jon files
+    AutonomousPath position1 = new AutonomousPath("Position 1", "Position 1 Shoot.wpilibb.json");
+
+    Path trajectoryPath1;
+    Trajectory trajectory1;
+
+    // Create a voltage constraint to ensure we don't accelerate too fast
+    var autoVoltageConstraint =
+    new DifferentialDriveVoltageConstraint(
+        new SimpleMotorFeedforward(DriveConstants.ksVolts,
+                                    DriveConstants.kvVoltSecondsPerMeter,
+                                    DriveConstants.kaVoltSecondsSquaredPerMeter),
+        DriveConstants.kDriveKinematics,
+        10);
+
+    // Import the trajectory
+    String trajectoryJSON = "Test1.wpilib.json";
+    try {
+      trajectoryPath1 = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+      trajectory1 = TrajectoryUtil.fromPathweaverJson(trajectoryPath1);
+      RamseteCommand ramseteCommand = new RamseteCommand(
+        trajectory1,
+        drive::getPose,
+        new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
+        DriveConstants.kDriveKinematics,
+        this.drive::tankDriveVolts,
+        this.drive
+      );
+      // Run path following command, then stop at the end.
+      return ramseteCommand.andThen(() -> drive.tankDriveVolts(0, 0));
+    } catch (IOException ex) {
+      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+    }
+
+    return null;
+
   }
 }
