@@ -231,7 +231,7 @@ public class RobotContainer {
         10);
 
     // Import the trajectory
-    String trajectoryJSON = "/home/lvuser/deploy/paths/Position 1 Shoot.wpilibb.json";
+    String trajectoryJSON = "Test1.wpilib.json";
     try {
       trajectoryPath1 = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
       trajectory1 = TrajectoryUtil.fromPathweaverJson(trajectoryPath1);

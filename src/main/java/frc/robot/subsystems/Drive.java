@@ -104,17 +104,17 @@ public class Drive extends SubsystemBase {
     leftBack.setSensorPhase(true);
 
     // Set up encoder
-    leftEncoder = new Encoder(6, 7);
-    leftEncoder.reset();
-    leftEncoder.setDistancePerPulse(Math.PI * DriveConstants.whd / DriveConstants.cpr); // distance per pulse is pi* (wheel diameter / counts per
+    this.leftEncoder = new Encoder(6, 7);
+    this.leftEncoder.reset();
+    this.leftEncoder.setDistancePerPulse(Math.PI * DriveConstants.whd / DriveConstants.cpr); // distance per pulse is pi* (wheel diameter / counts per
                                                           // revolution)
-    leftEncoder.setReverseDirection(true);
+    this.leftEncoder.setReverseDirection(true);
 
-    rightEncoder = new Encoder(8, 9);
-    rightEncoder.reset();
-    rightEncoder.setDistancePerPulse(Math.PI * DriveConstants.whd / DriveConstants.cpr); // distance per pulse is pi* (wheel diameter / counts per
+    this.rightEncoder = new Encoder(8, 9);
+    this.rightEncoder.reset();
+    this.rightEncoder.setDistancePerPulse(Math.PI * DriveConstants.whd / DriveConstants.cpr); // distance per pulse is pi* (wheel diameter / counts per
                                                            // revolution)
-    rightEncoder.setReverseDirection(false);
+    this.rightEncoder.setReverseDirection(false);
 
     // Initialize the Pigeon 9DOF
     pigeon = new PigeonIMU(8);
@@ -124,6 +124,9 @@ public class Drive extends SubsystemBase {
 
     // Set to aiming Mode
     this.setAimingMode();
+
+    // For Path following
+    this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(this.getHeading()));
     }
 
   public double getDriveInvert() {
@@ -141,10 +144,10 @@ public class Drive extends SubsystemBase {
   public void periodic() {
 
     // Update the distance
-    this.leftDistanceTraveled = leftEncoder.getDistance();
+    this.leftDistanceTraveled = this.leftEncoder.getDistance();
     SmartDashboard.putNumber("Left Distance", this.leftDistanceTraveled);
 
-    this.rightDistanceTraveled = rightEncoder.getDistance();
+    this.rightDistanceTraveled = this.rightEncoder.getDistance();
     SmartDashboard.putNumber("Right Distance", this.rightDistanceTraveled);
 
     // update the turn angle
@@ -160,16 +163,16 @@ public class Drive extends SubsystemBase {
 
     SmartDashboard.putNumber("Compass", this.pigeon.getAbsoluteCompassHeading());
     SmartDashboard.putNumber("Yaw", this.curX);
+   
     // SmartDashboard.putNumber("Pitch", this.curY);
     // SmartDashboard.putNumber("Roll", this.curZ);
     // SmartDashboard.putNumber("X Accelerometer", this.curZ*100);
 
     // Update the odometry in the periodic block
-    odometry.update(Rotation2d.fromDegrees(this.getHeading()), 
-                                           leftEncoder.getDistance(),
-                                           rightEncoder.getDistance()
+    this.odometry.update(Rotation2d.fromDegrees(this.getHeading()), 
+                                           this.leftEncoder.getDistance(),
+                                           this.rightEncoder.getDistance()
                     );
-
 
     this.targetAquired = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
     this.horizontalOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
@@ -280,7 +283,7 @@ public class Drive extends SubsystemBase {
    * @return the average of the two encoder readings
    */
   public double getAverageEncoderDistance() {
-    return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2.0;
+    return (this.leftEncoder.getDistance() + this.rightEncoder.getDistance()) / 2.0;
   }
 
   /**

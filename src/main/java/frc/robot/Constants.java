@@ -38,20 +38,17 @@ public final class Constants {
         public static final boolean kGyroReversed = false;
 
         // These all need to be identified
-        public static final double ksVolts = 0.745;
-        public static final double kvVoltSecondsPerMeter = 0.0751;
-        public static final double kaVoltSecondsSquaredPerMeter = 0.0113;
-        public static final double kMaxSpeedMetersPerSecond = 3;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-        public static final double kTrackwidthMeters = 0.69;
-        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
-                kTrackwidthMeters);
+        public static final double ksVolts = 0.974;
+        public static final double kvVoltSecondsPerMeter = 2.57;
+        public static final double kaVoltSecondsSquaredPerMeter = 0.402;
+        public static final double kMaxSpeedMetersPerSecond = 1.5;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
+        public static final double kTrackwidthMeters = 0.874;
+        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
 
         // Reasonable baseline values for a RAMSETE follower in units of meters and
         // seconds
-
         public static final double kRamseteB = 2;
-
         public static final double kRamseteZeta = 0.7;
         
         // For Limelight Distance calculations
