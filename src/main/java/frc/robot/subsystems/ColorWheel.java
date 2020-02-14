@@ -42,9 +42,7 @@ public class ColorWheel extends SubsystemBase {
     
     Color detectedColor = colorSensor.getColor();
 
-    /**
-     * Run the color match algorithm on our detected color
-     */
+     //  Run the color match algorithm on our detected color
     String colorString;
     ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
 

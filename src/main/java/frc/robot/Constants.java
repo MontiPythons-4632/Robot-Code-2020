@@ -7,6 +7,9 @@
 
 package frc.robot;
 
+import com.revrobotics.ColorMatch;
+import edu.wpi.first.wpilibj.util.Color;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -35,11 +38,10 @@ public final class Constants {
         public static final double kCameraAngle = 32.77;
         public static final double kCameraHeight = 0.24; // 9.5 inches ground to lens
         public static final double kTargetHeight = 2.74; // height to center of target in Meters
-        
     }
 
     // Constants for BeefCake Subsystem
-    public final class BeefCakeConstants {
+    public final static class BeefCakeConstants {
 
         public static final boolean DEBUG = true;
 
@@ -49,6 +51,11 @@ public final class Constants {
 
         public static final double kIntake = 0.5;
 
-
+        
+        // Infinite Reacharge
+        public static final Color kBlueTarget = ColorMatch.makeColor(0.17, 0.45, 0.35);
+        public static final Color kGreenTarget = ColorMatch.makeColor(0.22, 0.52, 0.25);
+        public static final Color kRedTarget = ColorMatch.makeColor(0.36, 0.43, 0.2);
+        public static final Color kYellowTarget = ColorMatch.makeColor(0.3, 0.53, 0.17);
     }
 }
