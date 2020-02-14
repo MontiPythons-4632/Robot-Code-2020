@@ -41,8 +41,12 @@ public class BeefCakeJoystickAngle extends CommandBase {
 
     double speed = this.joystick.getY()*BeefCakeConstants.kFeederSpeed;
 
-    if( Math.abs(speed) > 0.1 ) {
+    if( speed > 0.1 ) {
       beefCake.angleJoystick(speed);
+    }
+
+    if( speed < -0.1 ) {
+      beefCake.angleJoystick(0.25*speed);
     }
 
   }
