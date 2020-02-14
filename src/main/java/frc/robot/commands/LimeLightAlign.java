@@ -56,6 +56,10 @@ public class LimeLightAlign extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    // Set LimeLight to detection mode
+    this.driveSubsystem.setLimeLightDetectionMode();
+
     System.out.println(this.currXOffset);
     // this.currXOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
     this.currXHeading = this.driveSubsystem.getCurrentHeading();
@@ -93,6 +97,7 @@ public class LimeLightAlign extends CommandBase {
 
     if (this.timer >= 25) {
       SmartDashboard.putString("Mode", "Ready!");
+      this.driveSubsystem.setLimeLightNormalMode();
       return true;
     }
 
