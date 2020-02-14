@@ -5,20 +5,30 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.subsystems;
+package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+/**
+ * Add your docs here.
+ */
 
-public class ExampleSubsystem extends SubsystemBase {
-  /**
-   * Creates a new ExampleSubsystem.
-   */
-  public ExampleSubsystem() {
+public class AutonomousPath {
 
-  }
+    private String name;
+    private String filename;
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+    AutonomousPath(String name, String filename) {
+
+        this.name = name;
+        this.filename = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getFilename() {
+        return this.filename;
+    }
 }
+
+
