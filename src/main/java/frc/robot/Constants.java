@@ -29,7 +29,13 @@ public final class Constants {
         public static final double kTurnFast = 0.6;
 
         public static final double cpr = 214; // if am-3314a
-        public static final double whd = 6; // for 6 inch wheel      
+        public static final double whd = 6; // for 6 inch wheel
+        
+        // For Limelight Distance calculations
+        public static final double kCameraAngle = 32.77;
+        public static final double kCameraHeight = 0.24; // 9.5 inches ground to lens
+        public static final double kTargetHeight = 2.74; // height to center of target in Meters
+        
     }
 
     // Constants for BeefCake Subsystem
@@ -42,5 +48,7 @@ public final class Constants {
         public static final double kLauncherSpeed = 0.7;
 
         public static final double kIntake = 0.5;
+
+
     }
 }
