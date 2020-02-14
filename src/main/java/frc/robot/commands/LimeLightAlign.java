@@ -60,7 +60,7 @@ public class LimeLightAlign extends CommandBase {
     // As currXOffset approaches 0, THIS goes from +-1 to 0
     //                                  v---^^^^----------------------------v
     // this.actualSpeed = this.initSpeed * (this.currXOffset / this.initXOffset);
-    this.actualSpeed = Math.min(0.5 + Math.abs(this.currXOffset / 5 * 0.05), this.initSpeed);
+    this.actualSpeed = Math.min(0.5 + Math.abs(this.currXOffset / 5 * 0.05), this.initSpeed - .2);
 
     this.driveSubsystem.arcade(0, direction*this.actualSpeed);
 

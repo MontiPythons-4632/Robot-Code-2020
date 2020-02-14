@@ -51,6 +51,12 @@ public final class Constants {
         public static final double kRamseteB = 2;
 
         public static final double kRamseteZeta = 0.7;
+        
+        // For Limelight Distance calculations
+        public static final double kCameraAngle = 32.77;
+        public static final double kCameraHeight = 0.24; // 9.5 inches ground to lens
+        public static final double kTargetHeight = 2.74; // height to center of target in Meters
+        
     }
 
     // Constants for BeefCake Subsystem
@@ -63,6 +69,8 @@ public final class Constants {
         public static final double kLauncherSpeed = 0.7;
 
         public static final double kIntake = 0.5;
+
+
     }
 
     public final class AutoDriveConstants{
