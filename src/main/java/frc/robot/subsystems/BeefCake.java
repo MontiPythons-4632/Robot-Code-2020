@@ -18,6 +18,16 @@ import javax.swing.text.DefaultEditorKit.BeepAction;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+
+import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorMatchResult;
+import com.revrobotics.ColorMatch;
+
+import frc.robot.Constants;
 import frc.robot.Constants.*;
 
 public class BeefCake extends SubsystemBase {
@@ -33,6 +43,11 @@ public class BeefCake extends SubsystemBase {
   private final WPI_VictorSPX launcherRight;
   private final Spark intake;
   private final SpeedControllerGroup launcher;
+
+  private final I2C.Port i2cPort = I2C.Port.kOnboard;
+  private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
+  private final ColorMatch colorMatcher = new ColorMatch();
+
 
   public BeefCake() {
     angleMotors = new Spark(2);
@@ -70,6 +85,33 @@ public class BeefCake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    Color detectedColor = colorSensor.getColor();
+
+     //  Run the color match algorithm on our detected color
+    String colorString;
+    ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
+
+    if (match.color == Constants.BeefCakeConstants.kBlueTarget) {
+      colorString = "Blue";
+    } else if (match.color == Constants.BeefCakeConstants.kRedTarget) {
+      colorString = "Red";
+    } else if (match.color == Constants.BeefCakeConstants.kGreenTarget) {
+      colorString = "Green";
+    } else if (match.color == Constants.BeefCakeConstants.kYellowTarget) {
+      colorString = "Yellow";
+    } else {
+      colorString = "Unknown";
+    }
+
+    /**
+     * Open Smart Dashboard or Shuffleboard to see the color detected by the 
+     * sensor.
+     */
+    SmartDashboard.putNumber("Red", detectedColor.red);
+    SmartDashboard.putNumber("Green", detectedColor.green);
+    SmartDashboard.putNumber("Blue", detectedColor.blue);
+    SmartDashboard.putNumber("Confidence", match.confidence);
+    SmartDashboard.putString("Detected Color", colorString);    
   }
 
   //  Turns the feeder On and Off

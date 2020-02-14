@@ -9,6 +9,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
+import java.util.concurrent.atomic.DoubleAccumulator;
+
 import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -18,6 +21,8 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.networktables.*;
 
@@ -54,6 +59,8 @@ public class Drive extends SubsystemBase {
   //  Limelight variables
   private double targetAquired;
   private double horizontalOffset;
+  private double verticalOffset;
+
 
   public Drive() {
     leftFront = new WPI_TalonSRX(1);
@@ -152,6 +159,10 @@ public class Drive extends SubsystemBase {
 
     this.targetAquired = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
     this.horizontalOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+    this.verticalOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+
+    this.getDistanceToTarget();
+
   }
 
   public void arcade(double speed, double direction) {
@@ -202,6 +213,24 @@ public class Drive extends SubsystemBase {
 
       return this.curX;
 
+  }
+
+  public double getDistanceToTarget() {
+
+    if ( this.targetAquired == 0.0) {
+        return 0.0;
+    }
+
+    double actualAngle = this.verticalOffset + Constants.DriveConstants.kCameraAngle;
+    double actualHeightOffset = Constants.DriveConstants.kTargetHeight - Constants.DriveConstants.kCameraHeight;
+    double distance = actualHeightOffset / Math.tan(Math.toRadians(actualAngle));
+
+    SmartDashboard.putNumber("Actual Angle", actualAngle);
+
+    SmartDashboard.putNumber("Distance (feet)", distance * 39.37 / 12);
+
+    return distance;
+      
   }
 
   // public void limeLightAlign() {
