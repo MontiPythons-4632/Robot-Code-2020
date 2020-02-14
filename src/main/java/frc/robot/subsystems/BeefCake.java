@@ -25,20 +25,20 @@ public class BeefCake extends SubsystemBase {
    * Creates a new BeefCake.
    */
   private final Spark angleMotors;
-  private final Spark feed;
+  private final WPI_VictorSPX feed;
   private final Spark climber1;
   private final Spark climber2;
   private final SpeedControllerGroup climber;
   private final WPI_VictorSPX launcherLeft;
   private final WPI_VictorSPX launcherRight;
-  private final WPI_VictorSPX intake;
+  private final Spark intake;
   private final SpeedControllerGroup launcher;
 
   public BeefCake() {
     angleMotors = new Spark(2);
     addChild("angleMotors", angleMotors);
 
-    feed = new Spark(1);
+    feed = new WPI_VictorSPX(8);
     addChild("tower", feed);
     feed.setInverted(true);
 
@@ -62,7 +62,7 @@ public class BeefCake extends SubsystemBase {
     launcher = new SpeedControllerGroup(launcherLeft, launcherRight);
     addChild("Launcher", launcher);
 
-    intake = new WPI_VictorSPX(7);
+    intake = new Spark(1);
     addChild("Intake", intake);
     intake.setInverted(true);
   }
@@ -79,7 +79,7 @@ public class BeefCake extends SubsystemBase {
       System.out.println("Feeder is active");
     }
 
-    feed.setSpeed(BeefCakeConstants.kFeederSpeed);
+    feed.set(BeefCakeConstants.kFeederSpeed);
   }
 
   public void feederOff() {

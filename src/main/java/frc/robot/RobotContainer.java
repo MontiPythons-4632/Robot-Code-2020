@@ -63,7 +63,7 @@ public class RobotContainer {
     );
 
     this.beefCake.setDefaultCommand(
-      new RunCommand(() -> beefCake.angleJoystick(beefCakeJoystick.getY()*-0.75),
+      new RunCommand(() -> beefCake.angleJoystick(beefCakeJoystick.getY()),
                            beefCake
                     )
     );
