@@ -10,7 +10,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+// import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -71,6 +75,8 @@ public class RobotContainer {
   public RobotContainer() {
 
     configureButtonBindings();
+
+    drive.setLimeLightNormalMode();
 
     this.drive.setDefaultCommand(
       new RunCommand(() -> drive.arcade(driveJoystick.getY()*-1.0, driveJoystick.getX()), 
@@ -208,9 +214,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     System.out.println("getting Autonomous Command");
-    return createPathCommand();
 
-    
+    return new DriveForwardXFeet(this.drive, 2.0, 0.8);
+    // return createPathCommand();
   }
 
   private Command createPathCommand() {
@@ -232,24 +238,26 @@ public class RobotContainer {
 
     // Import the trajectory
     String trajectoryJSON = "Test1.wpilib.json";
-    try {
-      trajectoryPath1 = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-      trajectory1 = TrajectoryUtil.fromPathweaverJson(trajectoryPath1);
-      RamseteCommand ramseteCommand = new RamseteCommand(
-        trajectory1,
-        drive::getPose,
-        new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
-        DriveConstants.kDriveKinematics,
-        this.drive::tankDriveVolts,
-        this.drive
-      );
+    // try {
+      // trajectoryPath1 = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+      // trajectory1 = TrajectoryUtil.fromPathweaverJson(trajectoryPath1);
+      // RamseteCommand ramseteCommand = new RamseteCommand(
+      //   trajectory1,
+      //   drive::getPose,
+      //   new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
+      //   DriveConstants.kDriveKinematics,
+      //   this.drive::tankDriveVolts,
+      //   this.drive
+      // );
       // Run path following command, then stop at the end.
-      return ramseteCommand.andThen(() -> drive.tankDriveVolts(0, 0));
-    } catch (IOException ex) {
-      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-    }
+    //   return ramseteCommand.andThen(() -> drive.tankDriveVolts(0, 0));
+    // } catch (IOException ex) {
+    //   DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+    // }
 
     return null;
 
+
+    
   }
 }

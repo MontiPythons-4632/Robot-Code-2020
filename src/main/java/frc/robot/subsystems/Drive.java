@@ -66,10 +66,10 @@ public class Drive extends SubsystemBase {
   private double verticalOffset;
 
 
-  // Odometry class for tracking robot pose
-  private DifferentialDriveOdometry odometry;
+   // Odometry class for tracking robot pose
+   private DifferentialDriveOdometry odometry;
 
-  public Drive() {
+   public Drive() {
     leftFront = new WPI_TalonSRX(1);
     leftBack = new WPI_VictorSPX(2);
     left = new SpeedControllerGroup(leftFront, leftBack);
@@ -124,10 +124,10 @@ public class Drive extends SubsystemBase {
 
     // Set to aiming Mode
     this.setAimingMode();
-
+   
     // For Path following
     this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(this.getHeading()));
-    }
+  }
 
   public double getDriveInvert() {
     return driveInvert;
@@ -163,7 +163,7 @@ public class Drive extends SubsystemBase {
 
     SmartDashboard.putNumber("Compass", this.pigeon.getAbsoluteCompassHeading());
     SmartDashboard.putNumber("Yaw", this.curX);
-   
+
     // SmartDashboard.putNumber("Pitch", this.curY);
     // SmartDashboard.putNumber("Roll", this.curZ);
     // SmartDashboard.putNumber("X Accelerometer", this.curZ*100);
@@ -317,6 +317,20 @@ public class Drive extends SubsystemBase {
     return distance;
       
   }
+
+   public void setLimeLightNormalMode() {
+
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
+
+   }
+
+   public void setLimeLightDetectionMode() {
+
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+
+   }
+
+
 
   // public void limeLightAlign() {
   //   this.setAimingMode();
