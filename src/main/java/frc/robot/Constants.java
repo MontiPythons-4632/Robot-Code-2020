@@ -36,9 +36,9 @@ public final class Constants {
         public static final boolean kGyroReversed = false;
 
         // These all need to be identified
-        public static final double ksVolts = 7.0;
-        public static final double kvVoltSecondsPerMeter = 5.0;
-        public static final double kaVoltSecondsSquaredPerMeter = 25.0;
+        public static final double ksVolts = 0.745;
+        public static final double kvVoltSecondsPerMeter = 0.0751;
+        public static final double kaVoltSecondsSquaredPerMeter = 0.0113;
         public static final double kMaxSpeedMetersPerSecond = 3;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
         public static final double kTrackwidthMeters = 0.69;
@@ -65,4 +65,7 @@ public final class Constants {
         public static final double kIntake = 0.5;
     }
 
+    public final class AutoDriveConstants{
+        public static final String path = "/home/lvuser/deploy/paths";
+    }
 }
