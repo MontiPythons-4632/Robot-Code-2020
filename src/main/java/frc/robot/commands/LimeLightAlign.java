@@ -39,7 +39,11 @@ public class LimeLightAlign extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
     this.targetAquired = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
+    // Turn light on
+    this.driveSubsystem.setLimeLightDetectionMode();
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
     this.destXHeading = this.driveSubsystem.getCurrentHeading() - NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
     
     this.driveSubsystem.setAimingMode();

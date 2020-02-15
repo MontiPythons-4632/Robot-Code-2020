@@ -215,7 +215,9 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     System.out.println("getting Autonomous Command");
 
-    return new DriveForwardXFeet(this.drive, 2.0, 0.8);
+    return new AutoShoot(this.beefCake, this.drive);
+
+    // return new DriveForwardXFeet(this.drive, 2.0, 0.8);
     // return createPathCommand();
   }
 
@@ -238,24 +240,24 @@ public class RobotContainer {
 
     // Import the trajectory
     String trajectoryJSON = "Test1.wpilib.json";
-    // try {
-      // trajectoryPath1 = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-      // trajectory1 = TrajectoryUtil.fromPathweaverJson(trajectoryPath1);
-      // RamseteCommand ramseteCommand = new RamseteCommand(
-      //   trajectory1,
-      //   drive::getPose,
-      //   new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
-      //   DriveConstants.kDriveKinematics,
-      //   this.drive::tankDriveVolts,
-      //   this.drive
-      // );
+    try {
+      trajectoryPath1 = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+      trajectory1 = TrajectoryUtil.fromPathweaverJson(trajectoryPath1);
+      RamseteCommand ramseteCommand = new RamseteCommand(
+        trajectory1,
+        drive::getPose,
+        new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
+        DriveConstants.kDriveKinematics,
+        this.drive::tankDriveVolts,
+        this.drive
+      );
       // Run path following command, then stop at the end.
-    //   return ramseteCommand.andThen(() -> drive.tankDriveVolts(0, 0));
-    // } catch (IOException ex) {
-    //   DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-    // }
+      return ramseteCommand.andThen(() -> drive.tankDriveVolts(0, 0));
+    } catch (IOException ex) {
+      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+    }
 
-    return null;
+    return new DriveForwardXFeet(this.drive, 5.0, 0.6);
 
 
     

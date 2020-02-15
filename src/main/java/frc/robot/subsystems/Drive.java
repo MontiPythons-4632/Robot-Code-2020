@@ -132,7 +132,7 @@ public class Drive extends SubsystemBase {
   public double getDriveInvert() {
     return driveInvert;
   }
-    //memes lol
+
   public void setDriveInvert(double driveInvert) {
     this.driveInvert = driveInvert;
   }
@@ -320,16 +320,30 @@ public class Drive extends SubsystemBase {
 
    public void setLimeLightNormalMode() {
 
+    this.setLimeLightOff();
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
 
    }
 
    public void setLimeLightDetectionMode() {
 
+    this.setLimeLightOn();
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
 
    }
 
+   
+   public void setLimeLightOn() {
+
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(3);
+
+   }
+
+   public void setLimeLightOff() {
+
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+
+   }
 
 
   // public void limeLightAlign() {
