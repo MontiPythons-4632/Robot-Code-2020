@@ -78,17 +78,21 @@ public class RobotContainer {
 
     drive.setLimeLightNormalMode();
 
+    // beefCake.stopAngle();
+    // beefCake.launcherOff();
+    // beefCake.feederOff();
+
     this.drive.setDefaultCommand(
       new RunCommand(() -> drive.arcade(driveJoystick.getY()*-1.0, driveJoystick.getX()), 
                            drive
                     )
     );
 
-    this.beefCake.setDefaultCommand(
-      new RunCommand(() -> beefCake.angleJoystick(beefCakeJoystick.getY()),
-                           beefCake
-                    )
-    );
+    // this.beefCake.setDefaultCommand(
+    //   new RunCommand(() -> beefCake.angleJoystick(beefCakeJoystick.getY()),
+    //                        beefCake
+    //                 )
+    // );
 
   }
 

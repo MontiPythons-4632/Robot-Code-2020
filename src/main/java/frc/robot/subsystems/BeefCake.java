@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Timer;
 
 import java.util.function.BooleanSupplier;
 
@@ -231,6 +232,14 @@ public class BeefCake extends SubsystemBase {
   //  Adjusts the launcher Up and Down (using the angle of the co-pilot joystick)
   public void angleJoystick(double speed) {
     angleMotors.set(speed);
+  }
+
+  //  Flip out Launcher
+  public void launcherFlipOut() {
+    angleMotors.set(-0.8);
+    Timer delay = new Timer();
+    delay.delay(0.5);
+    angleMotors.stopMotor();
   }
 
   //  Turns the intake on and off

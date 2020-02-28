@@ -29,13 +29,14 @@ public class AutoShoot extends SequentialCommandGroup {
         
 
     super( 
+      // new InstantCommand(beefCakeSubSystem::launcherFlipOut, beefCakeSubSystem),
       new InstantCommand(beefCakeSubSystem::launcherOn, beefCakeSubSystem),
       new InstantCommand(driveSubSystem::setAimingMode, driveSubSystem),
-      new DriveForwardXFeet(driveSubSystem, 3.0, 0.8),
-      new AimXDegrees(beefCakeSubSystem, 35.0),
+      // new AimXDegrees(beefCakeSubSystem, 35.0),
       new LimeLightAlign(driveSubSystem),
       new LimeLightAlign(driveSubSystem),
       new InstantCommand(beefCakeSubSystem::feederOn, beefCakeSubSystem)
+//      new DriveForwardXFeet(driveSubSystem, 3.0, 0.8)
       );
 
   }

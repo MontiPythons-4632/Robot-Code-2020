@@ -335,13 +335,13 @@ public class Drive extends SubsystemBase {
    
    public void setLimeLightOn() {
 
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(3);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
 
    }
 
    public void setLimeLightOff() {
 
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
 
    }
 
