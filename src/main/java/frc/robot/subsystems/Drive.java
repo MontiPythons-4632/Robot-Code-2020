@@ -161,11 +161,11 @@ public class Drive extends SubsystemBase {
     // this.curY = ypr_deg[1];
     // this.curZ = ypr_deg[2];
 
-    SmartDashboard.putNumber("Compass", this.pigeon.getAbsoluteCompassHeading());
-    SmartDashboard.putNumber("Yaw", this.curX);
+    SmartDashboard.putNumber("Drive Compass", this.pigeon.getAbsoluteCompassHeading());
+    SmartDashboard.putNumber("Drive Yaw", this.curX);
 
-    // SmartDashboard.putNumber("Pitch", this.curY);
-    // SmartDashboard.putNumber("Roll", this.curZ);
+    // SmartDashboard.putNumber("Drive Pitch", this.curY);
+    // SmartDashboard.putNumber("Drive Roll", this.curZ);
     // SmartDashboard.putNumber("X Accelerometer", this.curZ*100);
 
     // Update the odometry in the periodic block
@@ -208,12 +208,16 @@ public class Drive extends SubsystemBase {
 
   public void setIntakeMode() {
     this.driveInvert = -1.0;
+    this.setLimeLightOff();
+    this.setLimeLightNormalMode();
     SmartDashboard.putString("Mode", "Intake");
     System.out.println("Drive is inverted");
   }
 
   public void setAimingMode() {
     this.driveInvert = 1.0;
+    this.setLimeLightOn();
+    this.setLimeLightDetectionMode();
     SmartDashboard.putString("Mode", "Aiming");
     System.out.println("Drive is not inverted");
   }
@@ -336,12 +340,14 @@ public class Drive extends SubsystemBase {
    public void setLimeLightOn() {
 
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
+    // System.out.println("Turn Limelight light on");
 
    }
 
    public void setLimeLightOff() {
 
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+    // System.out.println("Turn Limelight light on");
 
    }
 

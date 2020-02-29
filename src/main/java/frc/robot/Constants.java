@@ -62,8 +62,10 @@ public final class Constants {
 
         public static final boolean DEBUG = true;
 
+        public static final double kStartingAngle = -75.87;
         public static final double kFeederSpeed = 0.5;
         public static final double kAngleSpeed = 0.7;
+        public static final double kAngleRangeMax = 84;
         public static final double kLauncherSpeed = 0.3;
 
         public static final double kIntake = 0.5;

@@ -91,10 +91,10 @@ public class BeefCake extends SubsystemBase {
     intake.setInverted(true);
 
     // Initialize the Pigeon 9DOF
-    pigeon = new PigeonIMU(9);
-    pigeon.configFactoryDefault();
-    pigeon.setYaw(0.0);
-    pigeon.setFusedHeading(0.0);
+    this.pigeon = new PigeonIMU(9);
+    this.pigeon.configFactoryDefault();
+    this.tare();
+    
   }
 
   @Override
@@ -231,6 +231,7 @@ public class BeefCake extends SubsystemBase {
 
   //  Adjusts the launcher Up and Down (using the angle of the co-pilot joystick)
   public void angleJoystick(double speed) {
+    getCurrentAngle();
     angleMotors.set(speed);
   }
 
@@ -292,13 +293,24 @@ public class BeefCake extends SubsystemBase {
     climber.stopMotor();
   }
 
-  public double getCurrentAngle() {
+  public void tare() {
 
-    return this.curZ;
+    System.out.println("BeefCake Tare");
+    this.pigeon.setYaw(0.0);
+    this.pigeon.setFusedHeading(0.0);
 
   }
 
+  public double getCurrentAngle() {
+    
+    double currentAngle = this.curZ - BeefCakeConstants.kStartingAngle;
+    SmartDashboard.putNumber("BeefCake Angle", currentAngle);
+
+    return currentAngle;
+  }
+
   public void moveAngle(double speed) { 
+    this.getCurrentAngle();
     angleMotors.set(speed);
   }
 

@@ -8,6 +8,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.networktables.*;
 import frc.robot.subsystems.BeefCake;
@@ -29,14 +30,14 @@ public class AutoShoot extends SequentialCommandGroup {
         
 
     super( 
-      // new InstantCommand(beefCakeSubSystem::launcherFlipOut, beefCakeSubSystem),
       new InstantCommand(beefCakeSubSystem::launcherOn, beefCakeSubSystem),
       new InstantCommand(driveSubSystem::setAimingMode, driveSubSystem),
-      // new AimXDegrees(beefCakeSubSystem, 35.0),
-      new LimeLightAlign(driveSubSystem),
+      new ParallelCommandGroup(
+        new LimeLightAlign(driveSubSystem),
+        new LimeLightAim(beefCakeSubSystem)
+      ),
       new LimeLightAlign(driveSubSystem),
       new InstantCommand(beefCakeSubSystem::feederOn, beefCakeSubSystem)
-//      new DriveForwardXFeet(driveSubSystem, 3.0, 0.8)
       );
 
   }

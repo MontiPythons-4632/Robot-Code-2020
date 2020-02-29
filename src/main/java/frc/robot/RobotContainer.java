@@ -76,11 +76,14 @@ public class RobotContainer {
 
     configureButtonBindings();
 
-    drive.setLimeLightNormalMode();
+    drive.setLimeLightNormalMode();    
+    drive.setLimeLightOff();
 
-    // beefCake.stopAngle();
-    // beefCake.launcherOff();
-    // beefCake.feederOff();
+
+    beefCake.stopAngle();
+    beefCake.launcherOff();
+    beefCake.feederOff();
+    beefCake.tare();
 
     this.drive.setDefaultCommand(
       new RunCommand(() -> drive.arcade(driveJoystick.getY()*-1.0, driveJoystick.getX()), 
@@ -88,11 +91,11 @@ public class RobotContainer {
                     )
     );
 
-    // this.beefCake.setDefaultCommand(
-    //   new RunCommand(() -> beefCake.angleJoystick(beefCakeJoystick.getY()),
-    //                        beefCake
-    //                 )
-    // );
+    this.beefCake.setDefaultCommand(
+      new RunCommand(() -> beefCake.angleJoystick(beefCakeJoystick.getY()),
+                           beefCake
+                    )
+    );
 
   }
 
@@ -114,10 +117,9 @@ public class RobotContainer {
     ;
 
     //  Angles the launcher with buttons
-    // new JoystickButton(this.beefCakeJoystick, 3)
-    //   .whenPressed(this.beefCake::adjustAngleDown)
-    //   .whenReleased(this.beefCake::stopAngle)
-    // ;
+    new JoystickButton(this.beefCakeJoystick, 3)
+      .whenPressed(new LimeLightAim(this.beefCake))
+    ;
     
     // new JoystickButton(this.beefCakeJoystick, 2)
     //   .whenPressed(this.beefCake::adjustAngleUp)
@@ -135,11 +137,17 @@ public class RobotContainer {
     
     new JoystickButton(this.beefCakeJoystick, 8)
       .whenPressed(this.beefCake::climbUp)
-      .whenReleased(this.beefCake::climbOff);
+      .whenReleased(this.beefCake::climbOff)
+    ;
 
     new JoystickButton(this.beefCakeJoystick, 9)
       .whenPressed(this.beefCake::climbDown)
-      .whenReleased(this.beefCake::climbOff);
+      .whenReleased(this.beefCake::climbOff)
+    ;
+
+    new JoystickButton(this.beefCakeJoystick, 11)
+      .whenPressed(new LimeLightAlign(this.drive))
+    ;
 
     /*-------------/ DRIVE /-------------*/
 
@@ -162,7 +170,7 @@ public class RobotContainer {
     
     //  Turns the robot left or right 45 degrees ( +degrees is left, -degrees is right)
     new JoystickButton(this.driveJoystick, 4)
-      .whenPressed(new TurnXDegrees(this.drive, 25.0))
+      .whenPressed(new LimeLightAlign(this.drive));
     ;
    
     new JoystickButton(this.driveJoystick, 5)
