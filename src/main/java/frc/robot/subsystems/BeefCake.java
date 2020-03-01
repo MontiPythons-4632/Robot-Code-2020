@@ -30,7 +30,7 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
 
 import frc.robot.Constants;
-import frc.robot.Constants.*;
+import frc.robot.Constants.BeefCakeConstants;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 
@@ -92,9 +92,7 @@ public class BeefCake extends SubsystemBase {
 
     // Initialize the Pigeon 9DOF
     this.pigeon = new PigeonIMU(9);
-    this.pigeon.configFactoryDefault();
-    this.tare();
-    
+    this.pigeon.configFactoryDefault();    
   }
 
   @Override
@@ -155,8 +153,8 @@ public class BeefCake extends SubsystemBase {
   //  Turns the feeder On and Off
   public void feederOn() {
 
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("Feeder is active");
+    if ( BeefCakeConstants.kDebugBeefCakeFeeder > 0) {
+      System.out.println("Feeder: Feeder is active");
     }
 
     feed.set(BeefCakeConstants.kFeederSpeed);
@@ -164,35 +162,17 @@ public class BeefCake extends SubsystemBase {
 
   public void feederOff() {
 
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("Feeder is not active");
+    if ( BeefCakeConstants.kDebugBeefCakeFeeder > 0 ) {
+      System.out.println("Feeder: Feeder is not active");
     }
 
     feed.stopMotor();
   }
 
-  // public boolean isFeederOn() {
-
-  //   if ( this.feed.getSpeed() > 0.0 ) {
-  //       return true;
-  //   } else {
-  //       return false;
-  //   }
-  // }
-
-  // public BooleanSupplier isLauncherOn() {
-
-  //   if ( this.feed.getSpeed() > 0.0 ) {
-  //       return () -> true;
-  //   } else {
-  //       return () -> false;
-  //   }
-  // }
-
   //  Turns the launcher wheels On and Off
   public void launcherOn() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("launcherOn is active");
+    if ( BeefCakeConstants.kDebugBeefCakeLauncher > 0 ) {
+      System.out.println("Launcher: launcherOn is active");
     }
 
     launcher.set(BeefCakeConstants.kLauncherSpeed);
@@ -200,34 +180,12 @@ public class BeefCake extends SubsystemBase {
 
   public void launcherOff() {
 
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("launcherOff is active");
+    if ( BeefCakeConstants.kDebugBeefCakeLauncher > 0  ) {
+      System.out.println("Launcher: launcherOff is active");
     }
 
     launcher.stopMotor();
   }
-  
-  // public void adjustAngleUp() {
-
-  //   if ( BeefCakeConstants.DEBUG ) {
-  //     System.out.println("Adjusting angle up");
-  //   }
-
-  //   angleMotors.set(BeefCakeConstants.kAngleSpeed*0.6);
-  // }
-
-  // public void adjustAngleDown() {
-
-  //   if ( BeefCakeConstants.DEBUG ) {
-  //     System.out.println("Adjusting angle down");
-  //   }
-
-  //   angleMotors.set(BeefCakeConstants.kAngleSpeed * -1.0);
-  // }
-
-  // public void stopAngle() {
-  //   angleMotors.stopMotor();
-  // }
 
   //  Adjusts the launcher Up and Down (using the angle of the co-pilot joystick)
   public void angleJoystick(double speed) {
@@ -236,25 +194,24 @@ public class BeefCake extends SubsystemBase {
   }
 
   //  Flip out Launcher
-  public void launcherFlipOut() {
+  public void intakeFlipOut() {
     angleMotors.set(-0.8);
-    Timer delay = new Timer();
-    delay.delay(0.5);
+    Timer.delay(0.5);
     angleMotors.stopMotor();
   }
 
   //  Turns the intake on and off
   public void intakeOn() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("intake is active");
+    if ( BeefCakeConstants.kDebugBeefCakeIntake > 0) {
+      System.out.println("Intake: intake is on");
     }
 
     intake.set(BeefCakeConstants.kIntake);
   }
 
   public void intakeReverse() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("intake is active");
+    if (BeefCakeConstants.kDebugBeefCakeIntake > 0) {
+      System.out.println("Intake: intake is reverse");
     }
 
     intake.set(-1.0*BeefCakeConstants.kIntake);
@@ -262,32 +219,32 @@ public class BeefCake extends SubsystemBase {
 
 
   public void intakeOff() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("intake is not active");
+    if ( BeefCakeConstants.kDebugBeefCakeIntake > 0) {
+      System.out.println("Intake: intake is off");
     }
 
     intake.stopMotor();
   }
 
   public void climbUp() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("climber is active");
+    if ( BeefCakeConstants.kDebugBeefCakeClimber > 0 ) {
+      System.out.println("Climber: up");
     }
 
     climber.set(0.9);
   }
 
   public void climbDown() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("climber is active");
+    if ( BeefCakeConstants.kDebugBeefCakeClimber > 0) {
+      System.out.println("Climber: climber is active");
     }
 
     climber.set(-0.9);
   }
 
   public void climbOff() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("climber is active");
+    if ( BeefCakeConstants.kDebugBeefCakeClimber > 0 ) {
+      System.out.println("CLimber: climber is off");
     }
 
     climber.stopMotor();
@@ -295,7 +252,10 @@ public class BeefCake extends SubsystemBase {
 
   public void tare() {
 
-    System.out.println("BeefCake Tare");
+    if ( BeefCakeConstants.kDebugBeefCakeAngle > 0 ) {
+      System.out.println("Angle: Tare");
+    }
+
     this.pigeon.setYaw(0.0);
     this.pigeon.setFusedHeading(0.0);
 
@@ -303,6 +263,10 @@ public class BeefCake extends SubsystemBase {
 
   public double getCurrentAngle() {
     
+    if ( BeefCakeConstants.kDebugBeefCakeAngle > 0 ) {
+      System.out.println("Angle: getting value");
+    }
+
     double currentAngle = this.curZ - BeefCakeConstants.kStartingAngle;
     SmartDashboard.putNumber("BeefCake Angle", currentAngle);
 
@@ -310,11 +274,20 @@ public class BeefCake extends SubsystemBase {
   }
 
   public void moveAngle(double speed) { 
+
+    if ( BeefCakeConstants.kDebugBeefCakeAngle > 0 ) {
+      System.out.println("Angle: move at " + speed );
+    }
+
     this.getCurrentAngle();
     angleMotors.set(speed);
   }
 
   public void stopAngle() { 
+
+    if ( BeefCakeConstants.kDebugBeefCakeAngle > 0 ) {
+      System.out.println("Angle: Stop");
+    }
     angleMotors.stopMotor();
   }
 }

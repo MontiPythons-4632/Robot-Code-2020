@@ -30,6 +30,7 @@ public class AutoShoot extends SequentialCommandGroup {
         
 
     super( 
+      new InstantCommand(beefCakeSubSystem::intakeFlipOut, beefCakeSubSystem),
       new InstantCommand(beefCakeSubSystem::launcherOn, beefCakeSubSystem),
       new InstantCommand(driveSubSystem::setAimingMode, driveSubSystem),
       new ParallelCommandGroup(

@@ -26,7 +26,10 @@ public final class Constants {
     // Constants for Drive Subsystem
     public final static class DriveConstants {
 
-        public static final boolean DEBUG = false;
+        public static final int kDebugDriveAll = 1;
+        public static final int kDebugDrive = kDebugDriveAll;
+        public static final int kDebugLimeLight = kDebugDriveAll;
+
 
         public static final double kDriveSlow = 0.5;
         public static final double kDriveNorm = 0.7;
@@ -63,7 +66,16 @@ public final class Constants {
     // Constants for BeefCake Subsystem
     public final static class BeefCakeConstants {
 
-        public static final boolean DEBUG = true;
+        // Make these true to print debug statements in console
+        // 0 is off
+        // 1 is status messages
+        // use higher numbers for more detail
+        public static final int kBeefCakeAll = 1;
+        public static final int kDebugBeefCakeFeeder = kBeefCakeAll;
+        public static final int kDebugBeefCakeLauncher = kBeefCakeAll;
+        public static final int kDebugBeefCakeIntake = kBeefCakeAll;
+        public static final int kDebugBeefCakeAngle = kBeefCakeAll;
+        public static final int kDebugBeefCakeClimber = kBeefCakeAll;
 
         public static final double kStartingAngle = -75.87;
         public static final double kFeederSpeed = 0.5;

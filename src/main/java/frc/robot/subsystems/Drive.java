@@ -56,13 +56,9 @@ public class Drive extends SubsystemBase {
   // private double curZ;
   // private double curCompass;
 
-  // Move this to constants
-  // private static final double cpr = 214; // if am-3314a
-  // private static final double whd = 6; // for 6 inch wheel
-
   //  Limelight variables
   private double targetAquired;
-  private double horizontalOffset;
+  // private double horizontalOffset;
   private double verticalOffset;
 
 
@@ -175,7 +171,7 @@ public class Drive extends SubsystemBase {
                     );
 
     this.targetAquired = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
-    this.horizontalOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+    // this.horizontalOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
     this.verticalOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
 
     this.getDistanceToTarget();
@@ -192,16 +188,29 @@ public class Drive extends SubsystemBase {
 
   // Change robot speed limit. Based on buttons 2 and 3 in RobotContainer
   public void setLimitNorm() {
+
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: Speed limit norm");
+    }
     this.speedLimit = DriveConstants.kDriveNorm;
     this.turnLimit = DriveConstants.kTurnNorm;
   }
 
   public void setLimitFast() {
+
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: Speed limit fast");
+    }
+
     this.speedLimit = DriveConstants.kDriveFast;
     this.turnLimit = DriveConstants.kTurnFast;
   }
 
   public void setLimitSlow() {
+
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: slow");
+    }
     this.speedLimit = DriveConstants.kDriveSlow;
     this.turnLimit = DriveConstants.kTurnSlow;
   }
@@ -211,7 +220,9 @@ public class Drive extends SubsystemBase {
     this.setLimeLightOff();
     this.setLimeLightNormalMode();
     SmartDashboard.putString("Mode", "Intake");
-    System.out.println("Drive is inverted");
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: Intake");
+    }
   }
 
   public void setAimingMode() {
@@ -219,19 +230,32 @@ public class Drive extends SubsystemBase {
     this.setLimeLightOn();
     this.setLimeLightDetectionMode();
     SmartDashboard.putString("Mode", "Aiming");
-    System.out.println("Drive is not inverted");
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: Aiming");
+    }
   }
 
   public double getDriveMode() {
+
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: get drive mode");
+    }
     return this.driveInvert;
   }
   //  In the future replace with a getDistLeft() and getDistRight()
   public double getDistanceTraveled() {
+
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: get distance travelled");
+    }
     return (this.leftDistanceTraveled + this.rightDistanceTraveled) / 2;
   }
 
   public double getCurrentHeading() {
 
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: get heading");
+    }
       return this.curX;
 
   }
@@ -277,6 +301,10 @@ public class Drive extends SubsystemBase {
    * Resets the drive encoders to currently read a position of 0.
    */
   public void resetEncoders() {
+
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: reset encoders");
+    }
     this.leftEncoder.reset();
     this.rightEncoder.reset();
   }
@@ -306,6 +334,10 @@ public class Drive extends SubsystemBase {
 
   public double getDistanceToTarget() {
 
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: get distance to target");
+    }
+
     if ( this.targetAquired == 0.0) {
         return 0.0;
     }
@@ -324,6 +356,9 @@ public class Drive extends SubsystemBase {
 
    public void setLimeLightNormalMode() {
 
+    if ( DriveConstants.kDebugLimeLight > 0 ) {
+      System.out.println("Drive Limelight: normal mode");
+    }
     this.setLimeLightOff();
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
 
@@ -331,6 +366,9 @@ public class Drive extends SubsystemBase {
 
    public void setLimeLightDetectionMode() {
 
+    if ( DriveConstants.kDebugLimeLight > 0 ) {
+      System.out.println("Drive Limelight: detection mode");
+    }
     this.setLimeLightOn();
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
 
@@ -339,31 +377,20 @@ public class Drive extends SubsystemBase {
    
    public void setLimeLightOn() {
 
+    if ( DriveConstants.kDebugLimeLight > 0 ) {
+      System.out.println("Drive Limelight: led on");
+    }
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
-    // System.out.println("Turn Limelight light on");
 
    }
 
    public void setLimeLightOff() {
 
+    if ( DriveConstants.kDebugLimeLight > 0 ) {
+      System.out.println("Drive Limelight: led off");
+    }
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-    // System.out.println("Turn Limelight light on");
 
    }
-
-
-  // public void limeLightAlign() {
-  //   this.setAimingMode();
-
-  //   SmartDashboard.putString("Mode", "Aligning");
-  //   if (this.targetAquired == 1) {
-  //     SmartDashboard.putBoolean("Target Aquired", true);
-  //   } else {
-  //     SmartDashboard.putBoolean("Target Aquired", false);
-  //   }
-
-  //   System.out.println(this.horizontalOffset);
-  //   this.TurnXDegrees(this.driveSubsystem, this.horizontalOffset);
-  // }
 
 }
