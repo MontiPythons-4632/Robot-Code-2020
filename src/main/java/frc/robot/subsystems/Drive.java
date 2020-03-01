@@ -66,10 +66,10 @@ public class Drive extends SubsystemBase {
   private double verticalOffset;
 
 
-  // Odometry class for tracking robot pose
-  private DifferentialDriveOdometry odometry;
+   // Odometry class for tracking robot pose
+   private DifferentialDriveOdometry odometry;
 
-  public Drive() {
+   public Drive() {
     leftFront = new WPI_TalonSRX(1);
     leftBack = new WPI_VictorSPX(2);
     left = new SpeedControllerGroup(leftFront, leftBack);
@@ -124,15 +124,15 @@ public class Drive extends SubsystemBase {
 
     // Set to aiming Mode
     this.setAimingMode();
-
+   
     // For Path following
     this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(this.getHeading()));
-    }
+  }
 
   public double getDriveInvert() {
     return driveInvert;
   }
-    //memes lol
+
   public void setDriveInvert(double driveInvert) {
     this.driveInvert = driveInvert;
   }
@@ -161,11 +161,11 @@ public class Drive extends SubsystemBase {
     // this.curY = ypr_deg[1];
     // this.curZ = ypr_deg[2];
 
-    SmartDashboard.putNumber("Compass", this.pigeon.getAbsoluteCompassHeading());
-    SmartDashboard.putNumber("Yaw", this.curX);
-   
-    // SmartDashboard.putNumber("Pitch", this.curY);
-    // SmartDashboard.putNumber("Roll", this.curZ);
+    SmartDashboard.putNumber("Drive Compass", this.pigeon.getAbsoluteCompassHeading());
+    SmartDashboard.putNumber("Drive Yaw", this.curX);
+
+    // SmartDashboard.putNumber("Drive Pitch", this.curY);
+    // SmartDashboard.putNumber("Drive Roll", this.curZ);
     // SmartDashboard.putNumber("X Accelerometer", this.curZ*100);
 
     // Update the odometry in the periodic block
@@ -208,12 +208,16 @@ public class Drive extends SubsystemBase {
 
   public void setIntakeMode() {
     this.driveInvert = -1.0;
+    this.setLimeLightOff();
+    this.setLimeLightNormalMode();
     SmartDashboard.putString("Mode", "Intake");
     System.out.println("Drive is inverted");
   }
 
   public void setAimingMode() {
     this.driveInvert = 1.0;
+    this.setLimeLightOn();
+    this.setLimeLightDetectionMode();
     SmartDashboard.putString("Mode", "Aiming");
     System.out.println("Drive is not inverted");
   }
@@ -317,6 +321,36 @@ public class Drive extends SubsystemBase {
     return distance;
       
   }
+
+   public void setLimeLightNormalMode() {
+
+    this.setLimeLightOff();
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
+
+   }
+
+   public void setLimeLightDetectionMode() {
+
+    this.setLimeLightOn();
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+
+   }
+
+   
+   public void setLimeLightOn() {
+
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
+    // System.out.println("Turn Limelight light on");
+
+   }
+
+   public void setLimeLightOff() {
+
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+    // System.out.println("Turn Limelight light on");
+
+   }
+
 
   // public void limeLightAlign() {
   //   this.setAimingMode();

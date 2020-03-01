@@ -10,7 +10,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+// import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -72,6 +76,15 @@ public class RobotContainer {
 
     configureButtonBindings();
 
+    drive.setLimeLightNormalMode();    
+    drive.setLimeLightOff();
+
+
+    beefCake.stopAngle();
+    beefCake.launcherOff();
+    beefCake.feederOff();
+    beefCake.tare();
+
     this.drive.setDefaultCommand(
       new RunCommand(() -> drive.arcade(driveJoystick.getY()*-1.0, driveJoystick.getX()), 
                            drive
@@ -104,10 +117,9 @@ public class RobotContainer {
     ;
 
     //  Angles the launcher with buttons
-    // new JoystickButton(this.beefCakeJoystick, 3)
-    //   .whenPressed(this.beefCake::adjustAngleDown)
-    //   .whenReleased(this.beefCake::stopAngle)
-    // ;
+    new JoystickButton(this.beefCakeJoystick, 3)
+      .whenPressed(new LimeLightAim(this.beefCake))
+    ;
     
     // new JoystickButton(this.beefCakeJoystick, 2)
     //   .whenPressed(this.beefCake::adjustAngleUp)
@@ -125,11 +137,17 @@ public class RobotContainer {
     
     new JoystickButton(this.beefCakeJoystick, 8)
       .whenPressed(this.beefCake::climbUp)
-      .whenReleased(this.beefCake::climbOff);
+      .whenReleased(this.beefCake::climbOff)
+    ;
 
     new JoystickButton(this.beefCakeJoystick, 9)
       .whenPressed(this.beefCake::climbDown)
-      .whenReleased(this.beefCake::climbOff);
+      .whenReleased(this.beefCake::climbOff)
+    ;
+
+    new JoystickButton(this.beefCakeJoystick, 11)
+      .whenPressed(new LimeLightAlign(this.drive))
+    ;
 
     /*-------------/ DRIVE /-------------*/
 
@@ -152,7 +170,7 @@ public class RobotContainer {
     
     //  Turns the robot left or right 45 degrees ( +degrees is left, -degrees is right)
     new JoystickButton(this.driveJoystick, 4)
-      .whenPressed(new TurnXDegrees(this.drive, 25.0))
+      .whenPressed(new LimeLightAlign(this.drive));
     ;
    
     new JoystickButton(this.driveJoystick, 5)
@@ -208,9 +226,11 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     System.out.println("getting Autonomous Command");
-    return createPathCommand();
 
-    
+    return new AutoShoot(this.beefCake, this.drive);
+
+    // return new DriveForwardXFeet(this.drive, 2.0, 0.8);
+    // return createPathCommand();
   }
 
   private Command createPathCommand() {
@@ -249,7 +269,9 @@ public class RobotContainer {
       DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
     }
 
-    return null;
+    return new DriveForwardXFeet(this.drive, 5.0, 0.6);
 
+
+    
   }
 }
