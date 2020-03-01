@@ -215,8 +215,8 @@ public class RobotContainer {
 
   private Command createPathCommand() {
 
-    // use this to setup up definition for jon files
-    AutonomousPath position1 = new AutonomousPath("Position 1", "Position 1 Shoot.wpilibb.json");
+    // use this to setup up definition for json files
+    // AutonomousPath position1 = new AutonomousPath("Position 1", "Position 1 Shoot.wpilibb.json");
 
     Path trajectoryPath1;
     Trajectory trajectory1;

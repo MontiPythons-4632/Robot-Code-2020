@@ -8,6 +8,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+
+import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
 import edu.wpi.first.wpilibj.util.Color;
 
