@@ -9,8 +9,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 
-import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ColorMatchResult;
+// import com.revrobotics.ColorSensorV3;
+// import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -84,9 +84,10 @@ public final class Constants {
         public static final double kLauncherSpeed = 0.3;
 
         public static final double kIntake = 0.5;
+        public static final double kColorSelectSpeed = 0.2;
 
         
-        // Infinite Reacharge
+        // Infinite Reacharge Colors
         public static final Color kBlueTarget = ColorMatch.makeColor(0.17, 0.45, 0.35);
         public static final Color kGreenTarget = ColorMatch.makeColor(0.22, 0.52, 0.25);
         public static final Color kRedTarget = ColorMatch.makeColor(0.36, 0.43, 0.2);

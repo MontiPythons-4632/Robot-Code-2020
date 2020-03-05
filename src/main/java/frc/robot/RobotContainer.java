@@ -63,7 +63,7 @@ public class RobotContainer {
   // The robot's subsystems are defined here...
   private final Drive drive = new Drive();
   private final BeefCake beefCake = new BeefCake();
-  private final ColorWheel colorWheel = new ColorWheel();
+  // private final ColorWheel colorWheel = new ColorWheel();
 
   // The robot's commands are defined here...
   // private BeefCakeJoystickAngle beefCakeJoystickAngle = new BeefCakeJoystickAngle(beefCake, beefCakeJoystick);

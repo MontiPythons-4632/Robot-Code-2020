@@ -9,17 +9,17 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.SpeedController;
+// import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
 
-import java.util.function.BooleanSupplier;
+// import java.util.function.BooleanSupplier;
 
-import javax.swing.text.DefaultEditorKit.BeepAction;
+// import javax.swing.text.DefaultEditorKit.BeepAction;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+// import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,8 +28,9 @@ import edu.wpi.first.wpilibj.util.Color;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
+import frc.robot.ColorWheel;
 
-import frc.robot.Constants;
+// import frc.robot.Constants;
 import frc.robot.Constants.BeefCakeConstants;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -56,7 +57,9 @@ public class BeefCake extends SubsystemBase {
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private final ColorMatch colorMatcher = new ColorMatch();
-  public char targetColor;
+  public String targetColor;
+  private String currentColor;
+
 
   public BeefCake() {
     angleMotors = new Spark(2);
@@ -92,7 +95,13 @@ public class BeefCake extends SubsystemBase {
 
     // Initialize the Pigeon 9DOF
     this.pigeon = new PigeonIMU(9);
-    this.pigeon.configFactoryDefault();    
+    this.pigeon.configFactoryDefault();   
+    
+    this.colorMatcher.addColorMatch(BeefCakeConstants.kBlueTarget);
+    this.colorMatcher.addColorMatch(BeefCakeConstants.kGreenTarget);
+    this.colorMatcher.addColorMatch(BeefCakeConstants.kRedTarget);
+    this.colorMatcher.addColorMatch(BeefCakeConstants.kYellowTarget);    
+
   }
 
   @Override
@@ -101,28 +110,42 @@ public class BeefCake extends SubsystemBase {
     Color detectedColor = colorSensor.getColor();
 
      //  Run the color match algorithm on our detected color
-    String colorString;
+    // String colorString;
     ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
 
     String gameData = DriverStation.getInstance().getGameSpecificMessage();
     
-    // if ( gameData != null ) {
-    //     this.targetColor = gameData.charAt(0);
-    // } else {
-    //     this.targetColor = '0';
-    // }
-    // SmartDashboard.putString("Detected Color", Character.toString(this.targetColor));
-
-    if (match.color == Constants.BeefCakeConstants.kBlueTarget) {
-      colorString = "Blue";
-    } else if (match.color == Constants.BeefCakeConstants.kRedTarget) {
-      colorString = "Red";
-    } else if (match.color == Constants.BeefCakeConstants.kGreenTarget) {
-      colorString = "Green";
-    } else if (match.color == Constants.BeefCakeConstants.kYellowTarget) {
-      colorString = "Yellow";
+    if ( gameData != null ) {
+      switch (gameData.charAt(0)) {
+        case 'G':
+          this.targetColor = "GREEN";
+          break;
+        case 'Y':
+          this.targetColor = "YELLOW";
+          break;
+        case 'B':
+          this.targetColor = "BLUE";
+          break;
+        case 'R':
+          this.targetColor = "RED";
+          break;
+      }
     } else {
-      colorString = "Unknown";
+        this.targetColor = "UNKNOWN";
+    }
+
+    SmartDashboard.putString("Target Color", this.targetColor);
+
+    if (match.color == BeefCakeConstants.kBlueTarget) {
+      this.currentColor = "Blue";
+    } else if (match.color == BeefCakeConstants.kRedTarget) {
+      this.currentColor = "Red";
+    } else if (match.color == BeefCakeConstants.kGreenTarget) {
+      this.currentColor = "Green";
+    } else if (match.color == BeefCakeConstants.kYellowTarget) {
+      this.currentColor = "Yellow";
+    } else {
+      this.currentColor = "Unknown";
     }
 
     //  Open Smart Dashboard or Shuffleboard to see the color detected by the sensor.
@@ -130,7 +153,7 @@ public class BeefCake extends SubsystemBase {
     SmartDashboard.putNumber("Green", detectedColor.green);
     SmartDashboard.putNumber("Blue", detectedColor.blue);
     SmartDashboard.putNumber("Confidence", match.confidence);
-    SmartDashboard.putString("Detected Color", colorString);    
+    SmartDashboard.putString("Detected Color", this.currentColor);    
 
     // update the turn angle
     // double[] xyz_dps = new double[3];
@@ -289,5 +312,11 @@ public class BeefCake extends SubsystemBase {
       System.out.println("Angle: Stop");
     }
     angleMotors.stopMotor();
+  }
+
+  public Integer colorOffset() {
+
+    return ColorWheel.valueOf(this.currentColor).ordinal() - ColorWheel.valueOf(this.targetColor).ordinal();
+
   }
 }
