@@ -10,23 +10,21 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 // import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+// import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+// import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
+// import edu.wpi.first.wpilibj.geometry.Pose2d;
+// import edu.wpi.first.wpilibj.geometry.Rotation2d;
 
-import edu.wpi.first.wpilibj.geometry.Translation2d;
+// import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -63,13 +61,6 @@ public class RobotContainer {
   // The robot's subsystems are defined here...
   private final Drive drive = new Drive();
   private final BeefCake beefCake = new BeefCake();
-  // private final ColorWheel colorWheel = new ColorWheel();
-
-  // The robot's commands are defined here...
-  // private BeefCakeJoystickAngle beefCakeJoystickAngle = new BeefCakeJoystickAngle(beefCake, beefCakeJoystick);
-  // private final DriveForwardXFeet driveXFeet = new DriveForwardXFeet(drive, 10.0, 0.5);
-  // private final DriveJoystick driveJoystickCommand = new DriveJoystick(drive, driveJoystick);
-  // private StartBeefCakeFeed startBeefCakeFeed = new StartBeefCakeFeed(beefCake);
 
   // The container for the robot.  Contains subsystems, OI devices, and commands.
   public RobotContainer() {
@@ -77,13 +68,10 @@ public class RobotContainer {
     configureButtonBindings();
 
     drive.setLimeLightNormalMode();    
-    drive.setLimeLightOff();
-
 
     beefCake.stopAngle();
     beefCake.launcherOff();
     beefCake.feederOff();
-    beefCake.tare();
 
     this.drive.setDefaultCommand(
       new RunCommand(() -> drive.arcade(driveJoystick.getY()*-1.0, driveJoystick.getX()), 
@@ -121,10 +109,10 @@ public class RobotContainer {
       .whenPressed(new LimeLightAim(this.beefCake))
     ;
     
-    // new JoystickButton(this.beefCakeJoystick, 2)
-    //   .whenPressed(this.beefCake::adjustAngleUp)
-    //   .whenReleased(this.beefCake::stopAngle)
-    // ;
+    new JoystickButton(this.beefCakeJoystick, 4)
+      .whenPressed(new InstantCommand(this.beefCake::feederReverse, this.beefCake))
+      .whenReleased( this.beefCake::feederOff)
+    ;
 
     //  Activate/Deactivate the launcher wheels
     new JoystickButton(this.beefCakeJoystick, 6)
@@ -192,14 +180,9 @@ public class RobotContainer {
       .whenPressed(new InstantCommand(this.drive::setAimingMode, this.drive))
     ;
 
-    //  Runs the DriveForwardXFeet command once
-    // new JoystickButton(this.driveJoystick, 10)
-    //   .whenPressed(new DriveForwardXFeet(this.drive, 6.5, 0.8))
-    // ;
-
     //  Runs the LimeLightAlign command
     new JoystickButton(this.driveJoystick, 10)
-      .whenPressed(new AutoShoot(this.beefCake, this.drive) 
+      .whenPressed(new Shoot(this.beefCake, this.drive) 
       )
     ;
 
@@ -207,14 +190,14 @@ public class RobotContainer {
     new JoystickButton(this.driveJoystick, 11)
       .whenPressed(
         new SequentialCommandGroup(
-          new DriveForwardXFeet(drive, 6.5, 0.8), 
-          new TurnXDegrees(drive, 62),
-          new DriveForwardXFeet(drive, 6.5, 0.8), 
-          new TurnXDegrees(drive, 62),
-          new DriveForwardXFeet(drive, 6.5, 0.8), 
-          new TurnXDegrees(drive, 62),
-          new DriveForwardXFeet(drive, 6.5, 0.8), 
-          new TurnXDegrees(drive, 62)
+          // new DriveForwardXFeet(drive, 6.5, 0.8), 
+          // new TurnXDegrees(drive, 62),
+          // new DriveForwardXFeet(drive, 6.5, 0.8), 
+          // new TurnXDegrees(drive, 62),
+          // new DriveForwardXFeet(drive, 6.5, 0.8), 
+          // new TurnXDegrees(drive, 62),
+          // new DriveForwardXFeet(drive, 6.5, 0.8), 
+          // new TurnXDegrees(drive, 62)
         )
       )
     ;

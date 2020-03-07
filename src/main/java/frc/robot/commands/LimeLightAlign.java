@@ -106,6 +106,7 @@ public class LimeLightAlign extends CommandBase {
     if (this.timer >= 25) {
       SmartDashboard.putString("Mode", "Ready!");
       // this.driveSubsystem.setLimeLightNormalMode();
+      this.driveSubsystem.stop();
       return true;
     }
 

@@ -21,19 +21,36 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoShoot extends SequentialCommandGroup {
+public class Shoot extends SequentialCommandGroup {
   /**
    * Creates a new AutoShoot.
    */
 
-  public AutoShoot(BeefCake beefCakeSubSystem, Drive driveSubSystem) {
+  public Shoot(BeefCake beefCakeSubSystem, Drive driveSubSystem) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
         
 
     super( 
-      new InstantCommand(driveSubSystem::intakeFlipOut, driveSubSystem),
-      new Shoot(beefCakeSubSystem, driveSubSystem)
+      // %new InstantCommand(beefCakeSubSystem::launcherOn, beefCakeSubSystem),
+      new InstantCommand(driveSubSystem::setAimingMode, driveSubSystem),
+      new ParallelCommandGroup(
+        new LimeLightAlign(driveSubSystem),
+        new LimeLightAim(beefCakeSubSystem)
+      ),
+      new LimeLightAlign(driveSubSystem),
+      new InstantCommand(beefCakeSubSystem::feederOn, beefCakeSubSystem),
+      new WaitCommand(AutoDriveConstants.kAutoShootTimeSeconds)
+      // Add a timeout (will end the command if, for instance, the shooter never gets up to
+      // speed)
+      .withTimeout(AutoDriveConstants.kAutoTimeoutSeconds)
+      // When the command ends, turn off the shooter and the feeder
+      .andThen(() -> {
+          beefCakeSubSystem.intakeOff();
+          beefCakeSubSystem.feederOff();
+          beefCakeSubSystem.launcherOff();
+        }
+      )
     );
   }
 }

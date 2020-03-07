@@ -10,7 +10,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Spark;
 // import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.Timer;
+// import edu.wpi.first.wpilibj.Timer;
 
 // import java.util.function.BooleanSupplier;
 
@@ -46,7 +46,9 @@ public class BeefCake extends SubsystemBase {
   private final SpeedControllerGroup climber;
   private final WPI_VictorSPX launcherLeft;
   private final WPI_VictorSPX launcherRight;
-  private final Spark intake;
+  private final SpeedControllerGroup intake;
+  private final Spark mainIntake;
+  private final Spark subIntake;
   private final SpeedControllerGroup launcher;
 
   private PigeonIMU pigeon;
@@ -89,9 +91,14 @@ public class BeefCake extends SubsystemBase {
     launcher = new SpeedControllerGroup(launcherLeft, launcherRight);
     addChild("Launcher", launcher);
 
-    intake = new Spark(1);
+    mainIntake = new Spark(4);
+    addChild("Main Intake", mainIntake);
+    mainIntake.setInverted(true);
+    subIntake = new Spark(1);
+    addChild("Sub Intake", subIntake);
+    subIntake.setInverted(false);
+    intake = new SpeedControllerGroup(mainIntake, subIntake);
     addChild("Intake", intake);
-    intake.setInverted(true);
 
     // Initialize the Pigeon 9DOF
     this.pigeon = new PigeonIMU(9);
@@ -115,23 +122,31 @@ public class BeefCake extends SubsystemBase {
 
     String gameData = DriverStation.getInstance().getGameSpecificMessage();
     
-    if ( gameData != null ) {
-      switch (gameData.charAt(0)) {
-        case 'G':
-          this.targetColor = "GREEN";
-          break;
-        case 'Y':
-          this.targetColor = "YELLOW";
-          break;
-        case 'B':
-          this.targetColor = "BLUE";
-          break;
-        case 'R':
-          this.targetColor = "RED";
-          break;
-      }
-    } else {
-        this.targetColor = "UNKNOWN";
+    if(gameData != null) {
+      if(gameData.length() > 0) {
+        switch (gameData.charAt(0)) {
+          case 'G':
+            this.targetColor = "GREEN";
+            SmartDashboard.putString("Target Color", "Green");
+            break;
+          case 'Y':
+            this.targetColor = "YELLOW";
+            SmartDashboard.putString("Target Color", "Yellow");
+            break;
+          case 'B':
+            this.targetColor = "BLUE";
+            SmartDashboard.putString("Target Color", "Blue");
+            break;
+          case 'R':
+            this.targetColor = "RED";
+            SmartDashboard.putString("Target Color", "Red");
+            break;
+          default:
+            this.targetColor = "UNKNOWN";
+            SmartDashboard.putString("Target Color", "Unknown");
+            break;
+        }
+      } 
     }
 
     SmartDashboard.putString("Target Color", this.targetColor);
@@ -162,15 +177,15 @@ public class BeefCake extends SubsystemBase {
 
     // Query the 9DOF sensor
     this.pigeon.getYawPitchRoll(ypr_deg);
-    this.curX = ypr_deg[0];
-    this.curY = ypr_deg[1];
+    // this.curX = ypr_deg[0];
+    // this.curY = ypr_deg[1];
     this.curZ = ypr_deg[2];
 
-    SmartDashboard.putNumber("Beef Compass", this.pigeon.getAbsoluteCompassHeading());
-    SmartDashboard.putNumber("Beef Yaw", this.curX);
-    SmartDashboard.putNumber("Beef Pitch", this.curY);
+    // SmartDashboard.putNumber("Beef Compass", this.pigeon.getAbsoluteCompassHeading());
+    // SmartDashboard.putNumber("Beef Yaw", this.curX);
+    // SmartDashboard.putNumber("Beef Pitch", this.curY);
     SmartDashboard.putNumber("Beef Roll", this.curZ);
-    SmartDashboard.putNumber("Beef X Accelerometer", this.curZ*100);
+    // SmartDashboard.putNumber("Beef X Accelerometer", this.curZ*100);
   }
 
   //  Turns the feeder On and Off
@@ -182,7 +197,15 @@ public class BeefCake extends SubsystemBase {
 
     feed.set(BeefCakeConstants.kFeederSpeed);
   }
+  
+  public void feederReverse() {
 
+    if ( BeefCakeConstants.kDebugBeefCakeFeeder > 0) {
+      System.out.println("Feeder: Feeder is active");
+    }
+
+    feed.set(-1.0 * BeefCakeConstants.kFeederSpeed);
+  }
   public void feederOff() {
 
     if ( BeefCakeConstants.kDebugBeefCakeFeeder > 0 ) {
@@ -199,6 +222,9 @@ public class BeefCake extends SubsystemBase {
     }
 
     launcher.set(BeefCakeConstants.kLauncherSpeed);
+
+    // double testLauncherSpeed = SmartDashboard.getNumber("testLauncherSpeed", 0.0);
+    // launcher.set(testLauncherSpeed);
   }
 
   public void launcherOff() {
@@ -216,12 +242,12 @@ public class BeefCake extends SubsystemBase {
     angleMotors.set(speed);
   }
 
-  //  Flip out Launcher
-  public void intakeFlipOut() {
-    angleMotors.set(-0.8);
-    Timer.delay(0.5);
-    angleMotors.stopMotor();
-  }
+  // //  Flip out Launcher
+  // public void intakeFlipOut() {
+  //   angleMotors.set(-0.8);
+  //   Timer.delay(0.5);
+  //   angleMotors.stopMotor();
+  // }
 
   //  Turns the intake on and off
   public void intakeOn() {
@@ -273,16 +299,16 @@ public class BeefCake extends SubsystemBase {
     climber.stopMotor();
   }
 
-  public void tare() {
+  // public void tare() {
 
-    if ( BeefCakeConstants.kDebugBeefCakeAngle > 0 ) {
-      System.out.println("Angle: Tare");
-    }
+  //   if ( BeefCakeConstants.kDebugBeefCakeAngle > 0 ) {
+  //     System.out.println("Angle: Tare");
+  //   }
 
-    this.pigeon.setYaw(0.0);
-    this.pigeon.setFusedHeading(0.0);
+  //   this.pigeon.setYaw(0.0);
+  //   this.pigeon.setFusedHeading(0.0);
 
-  }
+  // }
 
   public double getCurrentAngle() {
     
@@ -292,7 +318,7 @@ public class BeefCake extends SubsystemBase {
 
     double currentAngle = this.curZ - BeefCakeConstants.kStartingAngle;
     SmartDashboard.putNumber("BeefCake Angle", currentAngle);
-
+    // System.out.println("BeefCake Angle = " + currentAngle);
     return currentAngle;
   }
 

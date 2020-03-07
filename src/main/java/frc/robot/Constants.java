@@ -25,8 +25,12 @@ import edu.wpi.first.wpilibj.util.Color;
 public final class Constants {
     // Constants for Drive Subsystem
     public final static class DriveConstants {
-
-        public static final int kDebugDriveAll = 1;
+        
+        // Make these true to print debug statements in console
+        // 0 is off
+        // 1 is status messages
+        // use higher numbers for more detail
+        public static final int kDebugDriveAll = 0;
         public static final int kDebugDrive = kDebugDriveAll;
         public static final int kDebugLimeLight = kDebugDriveAll;
 
@@ -58,9 +62,9 @@ public final class Constants {
         public static final double kRamseteZeta = 0.7;
         
         // For Limelight Distance calculations
-        public static final double kCameraAngle = 32.77;
-        public static final double kCameraHeight = 0.24; // 9.5 inches ground to lens
-        public static final double kTargetHeight = 2.74; // height to center of target in Meters
+        public static final double kCameraAngle = 28.7937;
+        public static final double kCameraHeight = 1.0541; // meters from ground to lens
+        public static final double kTargetHeight = 2.7432; // height to center of target in Meters
     }
 
     // Constants for BeefCake Subsystem
@@ -70,7 +74,7 @@ public final class Constants {
         // 0 is off
         // 1 is status messages
         // use higher numbers for more detail
-        public static final int kBeefCakeAll = 1;
+        public static final int kBeefCakeAll = 0;
         public static final int kDebugBeefCakeFeeder = kBeefCakeAll;
         public static final int kDebugBeefCakeLauncher = kBeefCakeAll;
         public static final int kDebugBeefCakeIntake = kBeefCakeAll;
@@ -81,9 +85,11 @@ public final class Constants {
         public static final double kFeederSpeed = 0.5;
         public static final double kAngleSpeed = 0.7;
         public static final double kAngleRangeMax = 84;
-        public static final double kLauncherSpeed = 0.3;
 
-        public static final double kIntake = 0.5;
+        public static final double kLauncherSpeed = 0.5;
+        public static final double testDestZPitch = 45;        
+
+        public static final double kIntake = 0.4;
         public static final double kColorSelectSpeed = 0.2;
 
         
@@ -94,7 +100,9 @@ public final class Constants {
         public static final Color kYellowTarget = ColorMatch.makeColor(0.3, 0.53, 0.17);
     }
 
-    public final class AutoDriveConstants{
+    public final static class AutoDriveConstants{
+        public static final Double kAutoTimeoutSeconds = 4.0;
+        public static final Double kAutoShootTimeSeconds = 3.0;
         public static final String path = "/home/lvuser/deploy/paths";
     }
 }

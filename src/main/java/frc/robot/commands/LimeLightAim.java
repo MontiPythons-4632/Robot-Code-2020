@@ -16,6 +16,7 @@ import frc.robot.subsystems.BeefCake;
 import frc.robot.subsystems.Drive;
 import frc.robot.Constants;
 import frc.robot.commands.AimXDegrees;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LimeLightAim extends CommandBase {
@@ -28,13 +29,13 @@ public class LimeLightAim extends CommandBase {
   private double currZPitch;
   private double destZPitch;
   private double angleSpeed;
+  private double direction;
   
   public LimeLightAim(BeefCake beefCake) {
     // Use addRequirements() here to declare subsystem dependencies.
 
     this.beefCakeSubsystem = beefCake;
-    this.angleSpeed = 0.3
-    ;
+    this.angleSpeed = 0.6;
 
     addRequirements(beefCake);
   }
@@ -43,22 +44,24 @@ public class LimeLightAim extends CommandBase {
   @Override
   public void initialize() {
 
-    System.out.println("Running LimeLightAim");
+    // System.out.println("Running LimeLightAim");
     this.targetAquired = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
 
     // this.driveSubsystem.setLimeLightDetectionMode();
 
-    // this.destZPitch = this.beefCakeSubsystem.getCurrentPitch() - NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
-    this.destZPitch = 45.0;
+    // this.destZPitch = this.beefCakeSubsystem.getCurrentAngle() - NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+    // this.destZPitch = 45.0;
+    this.destZPitch = Constants.BeefCakeConstants.testDestZPitch;
+    // this.destZPitch = SmartDashboard.getNumber("testDestZPitch", 0);
 
     // this.driveSubsystem.setAimingMode();
 
-    // SmartDashboard.putString("Mode", "Aligning");
-    // if (this.targetAquired == 1) {
-    //   SmartDashboard.putBoolean("Target Aquired", true);
-    // } else {
-    //   SmartDashboard.putBoolean("Target Aquired", false);
-    // }
+    SmartDashboard.putString("Mode", "Aiming");
+    if (this.targetAquired == 1) {
+      SmartDashboard.putBoolean("Target Aquired", true);
+    } else {
+      SmartDashboard.putBoolean("Target Aquired", false);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -72,12 +75,13 @@ public class LimeLightAim extends CommandBase {
     System.out.println("BeefCake Align currOffset: " + this.currZOffset);
 
     // Down is 1 Up is -1
-    double direction = 1.0;
+    this.direction = 0.8;
     if ( this.currZOffset < 0 ) {
-            direction = -1.0;
+            this.direction = -0.5;
     }
 
     this.beefCakeSubsystem.moveAngle(direction * this.angleSpeed);
+    System.out.println("Angling");
   }
 
   // Called once the command ends or is interrupted.
@@ -89,13 +93,23 @@ public class LimeLightAim extends CommandBase {
   @Override
   public boolean isFinished() {
 
-    if (Math.abs(this.currZOffset) < 2.0)  {
+    if (Math.abs(this.currZOffset) < 1.0)  {
+      System.out.println("Stopping Angling! --> Destination Reached");
+
+      if (this.direction < 0) {
+        this.beefCakeSubsystem.moveAngle(0.1);
+        System.out.println("Adding Backlash");
+        Timer.delay(0.05);
+      }
+
       this.beefCakeSubsystem.stopAngle();
       return true;
     }
 
-    if (this.currZPitch < 0 || 
-      this.currZPitch > Constants.BeefCakeConstants.kAngleRangeMax) {
+    if ( (this.currZPitch < 0 && this.direction > 0) || 
+         (this.currZPitch > Constants.BeefCakeConstants.kAngleRangeMax && this.direction < 0)
+       ) {
+        System.out.println("Stopping Angling! --> Limit Reached");
         this.beefCakeSubsystem.stopAngle();
         return true;
     }
