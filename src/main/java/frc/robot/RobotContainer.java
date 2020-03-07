@@ -11,18 +11,20 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PIDController;
+// import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+// import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+// import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
+// import edu.wpi.first.wpilibj.geometry.Pose2d;
+// import edu.wpi.first.wpilibj.geometry.Rotation2d;
 
-import edu.wpi.first.wpilibj.geometry.Translation2d;
+// import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -59,18 +61,17 @@ public class RobotContainer {
   // The robot's subsystems are defined here...
   private final Drive drive = new Drive();
   private final BeefCake beefCake = new BeefCake();
-  private final ColorWheel colorWheel = new ColorWheel();
-
-  // The robot's commands are defined here...
-  // private BeefCakeJoystickAngle beefCakeJoystickAngle = new BeefCakeJoystickAngle(beefCake, beefCakeJoystick);
-  // private final DriveForwardXFeet driveXFeet = new DriveForwardXFeet(drive, 10.0, 0.5);
-  // private final DriveJoystick driveJoystickCommand = new DriveJoystick(drive, driveJoystick);
-  // private StartBeefCakeFeed startBeefCakeFeed = new StartBeefCakeFeed(beefCake);
 
   // The container for the robot.  Contains subsystems, OI devices, and commands.
   public RobotContainer() {
 
     configureButtonBindings();
+
+    drive.setLimeLightNormalMode();    
+
+    beefCake.stopAngle();
+    beefCake.launcherOff();
+    beefCake.feederOff();
 
     this.drive.setDefaultCommand(
       new RunCommand(() -> drive.arcade(driveJoystick.getY()*-1.0, driveJoystick.getX()), 
@@ -104,15 +105,14 @@ public class RobotContainer {
     ;
 
     //  Angles the launcher with buttons
-    // new JoystickButton(this.beefCakeJoystick, 3)
-    //   .whenPressed(this.beefCake::adjustAngleDown)
-    //   .whenReleased(this.beefCake::stopAngle)
-    // ;
+    new JoystickButton(this.beefCakeJoystick, 3)
+      .whenPressed(new LimeLightAim(this.beefCake))
+    ;
     
-    // new JoystickButton(this.beefCakeJoystick, 2)
-    //   .whenPressed(this.beefCake::adjustAngleUp)
-    //   .whenReleased(this.beefCake::stopAngle)
-    // ;
+    new JoystickButton(this.beefCakeJoystick, 4)
+      .whenPressed(new InstantCommand(this.beefCake::feederReverse, this.beefCake))
+      .whenReleased( this.beefCake::feederOff)
+    ;
 
     //  Activate/Deactivate the launcher wheels
     new JoystickButton(this.beefCakeJoystick, 6)
@@ -125,11 +125,17 @@ public class RobotContainer {
     
     new JoystickButton(this.beefCakeJoystick, 8)
       .whenPressed(this.beefCake::climbUp)
-      .whenReleased(this.beefCake::climbOff);
+      .whenReleased(this.beefCake::climbOff)
+    ;
 
     new JoystickButton(this.beefCakeJoystick, 9)
       .whenPressed(this.beefCake::climbDown)
-      .whenReleased(this.beefCake::climbOff);
+      .whenReleased(this.beefCake::climbOff)
+    ;
+
+    new JoystickButton(this.beefCakeJoystick, 11)
+      .whenPressed(new LimeLightAlign(this.drive))
+    ;
 
     /*-------------/ DRIVE /-------------*/
 
@@ -152,7 +158,7 @@ public class RobotContainer {
     
     //  Turns the robot left or right 45 degrees ( +degrees is left, -degrees is right)
     new JoystickButton(this.driveJoystick, 4)
-      .whenPressed(new TurnXDegrees(this.drive, 25.0))
+      .whenPressed(new LimeLightAlign(this.drive));
     ;
    
     new JoystickButton(this.driveJoystick, 5)
@@ -174,14 +180,9 @@ public class RobotContainer {
       .whenPressed(new InstantCommand(this.drive::setAimingMode, this.drive))
     ;
 
-    //  Runs the DriveForwardXFeet command once
-    // new JoystickButton(this.driveJoystick, 10)
-    //   .whenPressed(new DriveForwardXFeet(this.drive, 6.5, 0.8))
-    // ;
-
     //  Runs the LimeLightAlign command
     new JoystickButton(this.driveJoystick, 10)
-      .whenPressed(new AutoShoot(this.beefCake, this.drive) 
+      .whenPressed(new Shoot(this.beefCake, this.drive) 
       )
     ;
 
@@ -189,14 +190,14 @@ public class RobotContainer {
     new JoystickButton(this.driveJoystick, 11)
       .whenPressed(
         new SequentialCommandGroup(
-          new DriveForwardXFeet(drive, 6.5, 0.8), 
-          new TurnXDegrees(drive, 62),
-          new DriveForwardXFeet(drive, 6.5, 0.8), 
-          new TurnXDegrees(drive, 62),
-          new DriveForwardXFeet(drive, 6.5, 0.8), 
-          new TurnXDegrees(drive, 62),
-          new DriveForwardXFeet(drive, 6.5, 0.8), 
-          new TurnXDegrees(drive, 62)
+          // new DriveForwardXFeet(drive, 6.5, 0.8), 
+          // new TurnXDegrees(drive, 62),
+          // new DriveForwardXFeet(drive, 6.5, 0.8), 
+          // new TurnXDegrees(drive, 62),
+          // new DriveForwardXFeet(drive, 6.5, 0.8), 
+          // new TurnXDegrees(drive, 62),
+          // new DriveForwardXFeet(drive, 6.5, 0.8), 
+          // new TurnXDegrees(drive, 62)
         )
       )
     ;
@@ -208,15 +209,17 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     System.out.println("getting Autonomous Command");
-    return createPathCommand();
 
-    
+    return new AutoShoot(this.beefCake, this.drive);
+
+    // return new DriveForwardXFeet(this.drive, 2.0, 0.8);
+    // return createPathCommand();
   }
 
   private Command createPathCommand() {
 
-    // use this to setup up definition for jon files
-    AutonomousPath position1 = new AutonomousPath("Position 1", "Position 1 Shoot.wpilibb.json");
+    // use this to setup up definition for json files
+    // AutonomousPath position1 = new AutonomousPath("Position 1", "Position 1 Shoot.wpilibb.json");
 
     Path trajectoryPath1;
     Trajectory trajectory1;
@@ -249,7 +252,9 @@ public class RobotContainer {
       DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
     }
 
-    return null;
+    return new DriveForwardXFeet(this.drive, 5.0, 0.6);
 
+
+    
   }
 }

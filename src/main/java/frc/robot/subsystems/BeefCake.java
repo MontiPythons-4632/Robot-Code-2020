@@ -9,16 +9,18 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.SpeedController;
+// import edu.wpi.first.wpilibj.SpeedController;
+// import edu.wpi.first.wpilibj.Timer;
 
-import java.util.function.BooleanSupplier;
+// import java.util.function.BooleanSupplier;
 
-import javax.swing.text.DefaultEditorKit.BeepAction;
+// import javax.swing.text.DefaultEditorKit.BeepAction;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+// import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -26,9 +28,12 @@ import edu.wpi.first.wpilibj.util.Color;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
+import frc.robot.ColorWheel;
 
-import frc.robot.Constants;
-import frc.robot.Constants.*;
+// import frc.robot.Constants;
+import frc.robot.Constants.BeefCakeConstants;
+
+import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class BeefCake extends SubsystemBase {
   /**
@@ -41,12 +46,21 @@ public class BeefCake extends SubsystemBase {
   private final SpeedControllerGroup climber;
   private final WPI_VictorSPX launcherLeft;
   private final WPI_VictorSPX launcherRight;
-  private final Spark intake;
+  private final SpeedControllerGroup intake;
+  private final Spark mainIntake;
+  private final Spark subIntake;
   private final SpeedControllerGroup launcher;
+
+  private PigeonIMU pigeon;
+  private double curX;
+  private double curY;
+  private double curZ;
 
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   private final ColorMatch colorMatcher = new ColorMatch();
+  public String targetColor;
+  private String currentColor;
 
 
   public BeefCake() {
@@ -77,9 +91,24 @@ public class BeefCake extends SubsystemBase {
     launcher = new SpeedControllerGroup(launcherLeft, launcherRight);
     addChild("Launcher", launcher);
 
-    intake = new Spark(1);
+    mainIntake = new Spark(4);
+    addChild("Main Intake", mainIntake);
+    mainIntake.setInverted(true);
+    subIntake = new Spark(1);
+    addChild("Sub Intake", subIntake);
+    subIntake.setInverted(false);
+    intake = new SpeedControllerGroup(mainIntake, subIntake);
     addChild("Intake", intake);
-    intake.setInverted(true);
+
+    // Initialize the Pigeon 9DOF
+    this.pigeon = new PigeonIMU(9);
+    this.pigeon.configFactoryDefault();   
+    
+    this.colorMatcher.addColorMatch(BeefCakeConstants.kBlueTarget);
+    this.colorMatcher.addColorMatch(BeefCakeConstants.kGreenTarget);
+    this.colorMatcher.addColorMatch(BeefCakeConstants.kRedTarget);
+    this.colorMatcher.addColorMatch(BeefCakeConstants.kYellowTarget);    
+
   }
 
   @Override
@@ -88,126 +117,150 @@ public class BeefCake extends SubsystemBase {
     Color detectedColor = colorSensor.getColor();
 
      //  Run the color match algorithm on our detected color
-    String colorString;
+    // String colorString;
     ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
 
-    if (match.color == Constants.BeefCakeConstants.kBlueTarget) {
-      colorString = "Blue";
-    } else if (match.color == Constants.BeefCakeConstants.kRedTarget) {
-      colorString = "Red";
-    } else if (match.color == Constants.BeefCakeConstants.kGreenTarget) {
-      colorString = "Green";
-    } else if (match.color == Constants.BeefCakeConstants.kYellowTarget) {
-      colorString = "Yellow";
-    } else {
-      colorString = "Unknown";
+    String gameData = DriverStation.getInstance().getGameSpecificMessage();
+    
+    if(gameData != null) {
+      if(gameData.length() > 0) {
+        switch (gameData.charAt(0)) {
+          case 'G':
+            this.targetColor = "GREEN";
+            SmartDashboard.putString("Target Color", "Green");
+            break;
+          case 'Y':
+            this.targetColor = "YELLOW";
+            SmartDashboard.putString("Target Color", "Yellow");
+            break;
+          case 'B':
+            this.targetColor = "BLUE";
+            SmartDashboard.putString("Target Color", "Blue");
+            break;
+          case 'R':
+            this.targetColor = "RED";
+            SmartDashboard.putString("Target Color", "Red");
+            break;
+          default:
+            this.targetColor = "UNKNOWN";
+            SmartDashboard.putString("Target Color", "Unknown");
+            break;
+        }
+      } 
     }
 
-    /**
-     * Open Smart Dashboard or Shuffleboard to see the color detected by the 
-     * sensor.
-     */
+    SmartDashboard.putString("Target Color", this.targetColor);
+
+    if (match.color == BeefCakeConstants.kBlueTarget) {
+      this.currentColor = "Blue";
+    } else if (match.color == BeefCakeConstants.kRedTarget) {
+      this.currentColor = "Red";
+    } else if (match.color == BeefCakeConstants.kGreenTarget) {
+      this.currentColor = "Green";
+    } else if (match.color == BeefCakeConstants.kYellowTarget) {
+      this.currentColor = "Yellow";
+    } else {
+      this.currentColor = "Unknown";
+    }
+
+    //  Open Smart Dashboard or Shuffleboard to see the color detected by the sensor.
     SmartDashboard.putNumber("Red", detectedColor.red);
     SmartDashboard.putNumber("Green", detectedColor.green);
     SmartDashboard.putNumber("Blue", detectedColor.blue);
     SmartDashboard.putNumber("Confidence", match.confidence);
-    SmartDashboard.putString("Detected Color", colorString);    
+    SmartDashboard.putString("Detected Color", this.currentColor);    
+
+    // update the turn angle
+    // double[] xyz_dps = new double[3];
+    double[] ypr_deg = new double[3];
+    // short[] ba_xyz_acc = new short[3];
+
+    // Query the 9DOF sensor
+    this.pigeon.getYawPitchRoll(ypr_deg);
+    // this.curX = ypr_deg[0];
+    // this.curY = ypr_deg[1];
+    this.curZ = ypr_deg[2];
+
+    // SmartDashboard.putNumber("Beef Compass", this.pigeon.getAbsoluteCompassHeading());
+    // SmartDashboard.putNumber("Beef Yaw", this.curX);
+    // SmartDashboard.putNumber("Beef Pitch", this.curY);
+    SmartDashboard.putNumber("Beef Roll", this.curZ);
+    // SmartDashboard.putNumber("Beef X Accelerometer", this.curZ*100);
   }
 
   //  Turns the feeder On and Off
   public void feederOn() {
 
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("Feeder is active");
+    if ( BeefCakeConstants.kDebugBeefCakeFeeder > 0) {
+      System.out.println("Feeder: Feeder is active");
     }
 
     feed.set(BeefCakeConstants.kFeederSpeed);
   }
+  
+  public void feederReverse() {
 
+    if ( BeefCakeConstants.kDebugBeefCakeFeeder > 0) {
+      System.out.println("Feeder: Feeder is active");
+    }
+
+    feed.set(-1.0 * BeefCakeConstants.kFeederSpeed);
+  }
   public void feederOff() {
 
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("Feeder is not active");
+    if ( BeefCakeConstants.kDebugBeefCakeFeeder > 0 ) {
+      System.out.println("Feeder: Feeder is not active");
     }
 
     feed.stopMotor();
   }
 
-  // public boolean isFeederOn() {
-
-  //   if ( this.feed.getSpeed() > 0.0 ) {
-  //       return true;
-  //   } else {
-  //       return false;
-  //   }
-  // }
-
-  // public BooleanSupplier isLauncherOn() {
-
-  //   if ( this.feed.getSpeed() > 0.0 ) {
-  //       return () -> true;
-  //   } else {
-  //       return () -> false;
-  //   }
-  // }
-
   //  Turns the launcher wheels On and Off
   public void launcherOn() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("launcherOn is active");
+    if ( BeefCakeConstants.kDebugBeefCakeLauncher > 0 ) {
+      System.out.println("Launcher: launcherOn is active");
     }
 
     launcher.set(BeefCakeConstants.kLauncherSpeed);
+
+    // double testLauncherSpeed = SmartDashboard.getNumber("testLauncherSpeed", 0.0);
+    // launcher.set(testLauncherSpeed);
   }
 
   public void launcherOff() {
 
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("launcherOff is active");
+    if ( BeefCakeConstants.kDebugBeefCakeLauncher > 0  ) {
+      System.out.println("Launcher: launcherOff is active");
     }
 
     launcher.stopMotor();
   }
-  
-  // public void adjustAngleUp() {
-
-  //   if ( BeefCakeConstants.DEBUG ) {
-  //     System.out.println("Adjusting angle up");
-  //   }
-
-  //   angleMotors.set(BeefCakeConstants.kAngleSpeed*0.6);
-  // }
-
-  // public void adjustAngleDown() {
-
-  //   if ( BeefCakeConstants.DEBUG ) {
-  //     System.out.println("Adjusting angle down");
-  //   }
-
-  //   angleMotors.set(BeefCakeConstants.kAngleSpeed * -1.0);
-  // }
-
-  // public void stopAngle() {
-  //   angleMotors.stopMotor();
-  // }
 
   //  Adjusts the launcher Up and Down (using the angle of the co-pilot joystick)
   public void angleJoystick(double speed) {
+    getCurrentAngle();
     angleMotors.set(speed);
   }
 
+  // //  Flip out Launcher
+  // public void intakeFlipOut() {
+  //   angleMotors.set(-0.8);
+  //   Timer.delay(0.5);
+  //   angleMotors.stopMotor();
+  // }
+
   //  Turns the intake on and off
   public void intakeOn() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("intake is active");
+    if ( BeefCakeConstants.kDebugBeefCakeIntake > 0) {
+      System.out.println("Intake: intake is on");
     }
 
     intake.set(BeefCakeConstants.kIntake);
   }
 
   public void intakeReverse() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("intake is active");
+    if (BeefCakeConstants.kDebugBeefCakeIntake > 0) {
+      System.out.println("Intake: intake is reverse");
     }
 
     intake.set(-1.0*BeefCakeConstants.kIntake);
@@ -215,34 +268,81 @@ public class BeefCake extends SubsystemBase {
 
 
   public void intakeOff() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("intake is not active");
+    if ( BeefCakeConstants.kDebugBeefCakeIntake > 0) {
+      System.out.println("Intake: intake is off");
     }
 
     intake.stopMotor();
   }
 
   public void climbUp() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("climber is active");
+    if ( BeefCakeConstants.kDebugBeefCakeClimber > 0 ) {
+      System.out.println("Climber: up");
     }
 
     climber.set(0.9);
   }
 
   public void climbDown() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("climber is active");
+    if ( BeefCakeConstants.kDebugBeefCakeClimber > 0) {
+      System.out.println("Climber: climber is active");
     }
 
     climber.set(-0.9);
   }
 
   public void climbOff() {
-    if ( BeefCakeConstants.DEBUG ) {
-      System.out.println("climber is active");
+    if ( BeefCakeConstants.kDebugBeefCakeClimber > 0 ) {
+      System.out.println("CLimber: climber is off");
     }
 
     climber.stopMotor();
+  }
+
+  // public void tare() {
+
+  //   if ( BeefCakeConstants.kDebugBeefCakeAngle > 0 ) {
+  //     System.out.println("Angle: Tare");
+  //   }
+
+  //   this.pigeon.setYaw(0.0);
+  //   this.pigeon.setFusedHeading(0.0);
+
+  // }
+
+  public double getCurrentAngle() {
+    
+    if ( BeefCakeConstants.kDebugBeefCakeAngle > 0 ) {
+      System.out.println("Angle: getting value");
+    }
+
+    double currentAngle = this.curZ - BeefCakeConstants.kStartingAngle;
+    SmartDashboard.putNumber("BeefCake Angle", currentAngle);
+    // System.out.println("BeefCake Angle = " + currentAngle);
+    return currentAngle;
+  }
+
+  public void moveAngle(double speed) { 
+
+    if ( BeefCakeConstants.kDebugBeefCakeAngle > 0 ) {
+      System.out.println("Angle: move at " + speed );
+    }
+
+    this.getCurrentAngle();
+    angleMotors.set(speed);
+  }
+
+  public void stopAngle() { 
+
+    if ( BeefCakeConstants.kDebugBeefCakeAngle > 0 ) {
+      System.out.println("Angle: Stop");
+    }
+    angleMotors.stopMotor();
+  }
+
+  public Integer colorOffset() {
+
+    return ColorWheel.valueOf(this.currentColor).ordinal() - ColorWheel.valueOf(this.targetColor).ordinal();
+
   }
 }

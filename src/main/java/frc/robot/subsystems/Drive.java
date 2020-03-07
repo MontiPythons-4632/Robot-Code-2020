@@ -8,12 +8,12 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+// import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-import java.util.concurrent.atomic.DoubleAccumulator;
+// import java.util.concurrent.atomic.DoubleAccumulator;
 
-import com.ctre.phoenix.motorcontrol.Faults;
-import com.ctre.phoenix.motorcontrol.InvertType;
+// import com.ctre.phoenix.motorcontrol.Faults;
+// import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.wpilibj.Timer;
+
 
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -56,20 +58,16 @@ public class Drive extends SubsystemBase {
   // private double curZ;
   // private double curCompass;
 
-  // Move this to constants
-  // private static final double cpr = 214; // if am-3314a
-  // private static final double whd = 6; // for 6 inch wheel
-
   //  Limelight variables
   private double targetAquired;
   private double horizontalOffset;
   private double verticalOffset;
 
 
-  // Odometry class for tracking robot pose
-  private DifferentialDriveOdometry odometry;
+   // Odometry class for tracking robot pose
+   private DifferentialDriveOdometry odometry;
 
-  public Drive() {
+   public Drive() {
     leftFront = new WPI_TalonSRX(1);
     leftBack = new WPI_VictorSPX(2);
     left = new SpeedControllerGroup(leftFront, leftBack);
@@ -106,14 +104,14 @@ public class Drive extends SubsystemBase {
     // Set up encoder
     this.leftEncoder = new Encoder(6, 7);
     this.leftEncoder.reset();
-    this.leftEncoder.setDistancePerPulse(Math.PI * DriveConstants.whd / DriveConstants.cpr); // distance per pulse is pi* (wheel diameter / counts per
-                                                          // revolution)
+    // distance per pulse is pi* (wheel diameter / counts per revolution)
+    this.leftEncoder.setDistancePerPulse(Math.PI * DriveConstants.whd / DriveConstants.cpr); 
     this.leftEncoder.setReverseDirection(true);
 
     this.rightEncoder = new Encoder(8, 9);
     this.rightEncoder.reset();
-    this.rightEncoder.setDistancePerPulse(Math.PI * DriveConstants.whd / DriveConstants.cpr); // distance per pulse is pi* (wheel diameter / counts per
-                                                           // revolution)
+    // distance per pulse is pi* (wheel diameter / counts per revolution)
+    this.rightEncoder.setDistancePerPulse(Math.PI * DriveConstants.whd / DriveConstants.cpr); 
     this.rightEncoder.setReverseDirection(false);
 
     // Initialize the Pigeon 9DOF
@@ -124,19 +122,12 @@ public class Drive extends SubsystemBase {
 
     // Set to aiming Mode
     this.setAimingMode();
-
+   
     // For Path following
     this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(this.getHeading()));
-    }
-
-  public double getDriveInvert() {
-    return driveInvert;
-  }
-    //memes lol
-  public void setDriveInvert(double driveInvert) {
-    this.driveInvert = driveInvert;
   }
 
+  // 
   public void initDefaultCommand() {
   }
 
@@ -161,11 +152,11 @@ public class Drive extends SubsystemBase {
     // this.curY = ypr_deg[1];
     // this.curZ = ypr_deg[2];
 
-    SmartDashboard.putNumber("Compass", this.pigeon.getAbsoluteCompassHeading());
-    SmartDashboard.putNumber("Yaw", this.curX);
-   
-    // SmartDashboard.putNumber("Pitch", this.curY);
-    // SmartDashboard.putNumber("Roll", this.curZ);
+    SmartDashboard.putNumber("Drive Compass", this.pigeon.getAbsoluteCompassHeading());
+    SmartDashboard.putNumber("Drive Yaw", this.curX);
+
+    // SmartDashboard.putNumber("Drive Pitch", this.curY);
+    // SmartDashboard.putNumber("Drive Roll", this.curZ);
     // SmartDashboard.putNumber("X Accelerometer", this.curZ*100);
 
     // Update the odometry in the periodic block
@@ -190,44 +181,82 @@ public class Drive extends SubsystemBase {
     this.differentialDrive.arcadeDrive(speed * speedLimit * driveInvert, direction * turnLimit);
   }
 
+  public void stop() {
+    // Stop drive motors
+    this.differentialDrive.stopMotor();
+  }
+
   // Change robot speed limit. Based on buttons 2 and 3 in RobotContainer
   public void setLimitNorm() {
+
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: Speed limit norm");
+    }
     this.speedLimit = DriveConstants.kDriveNorm;
     this.turnLimit = DriveConstants.kTurnNorm;
   }
 
   public void setLimitFast() {
+
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: Speed limit fast");
+    }
+
     this.speedLimit = DriveConstants.kDriveFast;
     this.turnLimit = DriveConstants.kTurnFast;
   }
 
   public void setLimitSlow() {
+
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: slow");
+    }
     this.speedLimit = DriveConstants.kDriveSlow;
     this.turnLimit = DriveConstants.kTurnSlow;
   }
 
   public void setIntakeMode() {
     this.driveInvert = -1.0;
+    // this.setLimeLightOff();
+    this.setLimeLightNormalMode();
     SmartDashboard.putString("Mode", "Intake");
-    System.out.println("Drive is inverted");
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: Intake");
+    }
   }
 
   public void setAimingMode() {
     this.driveInvert = 1.0;
+    // this.setLimeLightOn();
+    this.setLimeLightDetectionMode();
     SmartDashboard.putString("Mode", "Aiming");
-    System.out.println("Drive is not inverted");
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: Aiming");
+    }
   }
 
-  public double getDriveMode() {
-    return this.driveInvert;
-  }
+  // public double getDriveMode() {
+
+  //   if ( DriveConstants.kDebugDrive > 0 ) {
+  //     System.out.println("Drive: get drive mode");
+  //   }
+  //   return this.driveInvert;
+  // }
   //  In the future replace with a getDistLeft() and getDistRight()
+
   public double getDistanceTraveled() {
+
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: get distance travelled");
+    }
     return (this.leftDistanceTraveled + this.rightDistanceTraveled) / 2;
   }
 
   public double getCurrentHeading() {
 
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: get heading");
+    }
       return this.curX;
 
   }
@@ -235,7 +264,7 @@ public class Drive extends SubsystemBase {
    /**
    * Returns the heading of the robot.
    *
-   * @return the robot's heading in degrees, from -180 to 180
+   * return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
     return Math.IEEEremainder(this.curX, 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
@@ -273,6 +302,10 @@ public class Drive extends SubsystemBase {
    * Resets the drive encoders to currently read a position of 0.
    */
   public void resetEncoders() {
+
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: reset encoders");
+    }
     this.leftEncoder.reset();
     this.rightEncoder.reset();
   }
@@ -302,10 +335,16 @@ public class Drive extends SubsystemBase {
 
   public double getDistanceToTarget() {
 
+    if ( DriveConstants.kDebugDrive > 0 ) {
+      System.out.println("Drive: get distance to target");
+    }
+
     if ( this.targetAquired == 0.0) {
         return 0.0;
     }
 
+    //  acutalAngle = a1 + a2
+    //  actualHeightOffset = h2 - h1
     double actualAngle = this.verticalOffset + Constants.DriveConstants.kCameraAngle;
     double actualHeightOffset = Constants.DriveConstants.kTargetHeight - Constants.DriveConstants.kCameraHeight;
     double distance = actualHeightOffset / Math.tan(Math.toRadians(actualAngle));
@@ -318,18 +357,60 @@ public class Drive extends SubsystemBase {
       
   }
 
-  // public void limeLightAlign() {
-  //   this.setAimingMode();
+   public void setLimeLightNormalMode() {
 
-  //   SmartDashboard.putString("Mode", "Aligning");
-  //   if (this.targetAquired == 1) {
-  //     SmartDashboard.putBoolean("Target Aquired", true);
-  //   } else {
-  //     SmartDashboard.putBoolean("Target Aquired", false);
-  //   }
+    if ( DriveConstants.kDebugLimeLight > 0 ) {
+      System.out.println("Drive Limelight: normal mode");
+    }
+    this.setLimeLightOff();
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
 
-  //   System.out.println(this.horizontalOffset);
-  //   this.TurnXDegrees(this.driveSubsystem, this.horizontalOffset);
-  // }
+   }
 
+   public void setLimeLightDetectionMode() {
+
+    if ( DriveConstants.kDebugLimeLight > 0 ) {
+      System.out.println("Drive Limelight: detection mode");
+    }
+    this.setLimeLightOn();
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+
+   }
+
+   
+   public void setLimeLightOn() {
+
+    if ( DriveConstants.kDebugLimeLight > 0 ) {
+      System.out.println("Drive Limelight: led on");
+    }
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
+
+   }
+
+   public void setLimeLightOff() {
+
+    if ( DriveConstants.kDebugLimeLight > 0 ) {
+      System.out.println("Drive Limelight: led off");
+    }
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+
+   }
+
+   public void intakeFlipOut() {
+    // Make motion to flip out the launcher
+    this.arcade(0.8, 0);
+    Timer.delay(0.5);
+    this.arcade(-0.6, 0);
+    Timer.delay(0.5);
+    this.stop();
+
+   }
+  //  public double getDriveInvert() {
+    //   return driveInvert;
+    // }
+  
+    // public void setDriveInvert(double driveInvert) {
+    //   this.driveInvert = driveInvert;
+    // }
+  
 }

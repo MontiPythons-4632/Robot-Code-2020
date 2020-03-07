@@ -8,6 +8,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+
+// import com.revrobotics.ColorSensorV3;
+// import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -22,8 +25,15 @@ import edu.wpi.first.wpilibj.util.Color;
 public final class Constants {
     // Constants for Drive Subsystem
     public final static class DriveConstants {
+        
+        // Make these true to print debug statements in console
+        // 0 is off
+        // 1 is status messages
+        // use higher numbers for more detail
+        public static final int kDebugDriveAll = 0;
+        public static final int kDebugDrive = kDebugDriveAll;
+        public static final int kDebugLimeLight = kDebugDriveAll;
 
-        public static final boolean DEBUG = false;
 
         public static final double kDriveSlow = 0.5;
         public static final double kDriveNorm = 0.7;
@@ -52,31 +62,47 @@ public final class Constants {
         public static final double kRamseteZeta = 0.7;
         
         // For Limelight Distance calculations
-        public static final double kCameraAngle = 32.77;
-        public static final double kCameraHeight = 0.24; // 9.5 inches ground to lens
-        public static final double kTargetHeight = 2.74; // height to center of target in Meters
+        public static final double kCameraAngle = 28.7937;
+        public static final double kCameraHeight = 1.0541; // meters from ground to lens
+        public static final double kTargetHeight = 2.7432; // height to center of target in Meters
     }
 
     // Constants for BeefCake Subsystem
     public final static class BeefCakeConstants {
 
-        public static final boolean DEBUG = true;
+        // Make these true to print debug statements in console
+        // 0 is off
+        // 1 is status messages
+        // use higher numbers for more detail
+        public static final int kBeefCakeAll = 0;
+        public static final int kDebugBeefCakeFeeder = kBeefCakeAll;
+        public static final int kDebugBeefCakeLauncher = kBeefCakeAll;
+        public static final int kDebugBeefCakeIntake = kBeefCakeAll;
+        public static final int kDebugBeefCakeAngle = kBeefCakeAll;
+        public static final int kDebugBeefCakeClimber = kBeefCakeAll;
 
-        public static final double kFeederSpeed = 0.6;
+        public static final double kStartingAngle = -75.87;
+        public static final double kFeederSpeed = 0.5;
         public static final double kAngleSpeed = 0.7;
-        public static final double kLauncherSpeed = 0.7;
+        public static final double kAngleRangeMax = 84;
 
-        public static final double kIntake = 0.5;
+        public static final double kLauncherSpeed = 0.5;
+        public static final double testDestZPitch = 45;        
+
+        public static final double kIntake = 0.4;
+        public static final double kColorSelectSpeed = 0.2;
 
         
-        // Infinite Reacharge
+        // Infinite Reacharge Colors
         public static final Color kBlueTarget = ColorMatch.makeColor(0.17, 0.45, 0.35);
         public static final Color kGreenTarget = ColorMatch.makeColor(0.22, 0.52, 0.25);
         public static final Color kRedTarget = ColorMatch.makeColor(0.36, 0.43, 0.2);
         public static final Color kYellowTarget = ColorMatch.makeColor(0.3, 0.53, 0.17);
     }
 
-    public final class AutoDriveConstants{
+    public final static class AutoDriveConstants{
+        public static final Double kAutoTimeoutSeconds = 4.0;
+        public static final Double kAutoShootTimeSeconds = 3.0;
         public static final String path = "/home/lvuser/deploy/paths";
     }
 }
